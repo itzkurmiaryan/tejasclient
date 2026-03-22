@@ -1,0 +1,7 @@
+@import "tailwindcss";
+/* index.css ya globals.css */
+@layer utilities {
+  .noise-bg {
+    background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  }
+}
