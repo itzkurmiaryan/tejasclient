@@ -144,6 +144,7 @@ export default function AdminDashboard() {
               placeholder="Search..."
               className="bg-white/10 px-4 py-2 rounded-xl outline-none"
             />
+            
 
             {/* NOTIFICATION */}
             <div className="relative">
@@ -167,6 +168,15 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+            <button
+  onClick={() => {
+    localStorage.removeItem("isAdmin"); // ✅ logout
+    window.location.href = "/admin";    // redirect to login
+  }}
+  className="mt-6 p-2 bg-red-500 rounded-lg text-white hover:bg-red-600"
+>
+  Logout
+</button>
 
           </div>
         </div>

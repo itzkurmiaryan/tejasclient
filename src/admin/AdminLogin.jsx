@@ -23,14 +23,15 @@ export default function AdminLogin() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (username === "admin" && password === "1234") {
-      navigate("/admin/dashboard");
-    } else {
-      alert("Wrong credentials ❌");
-    }
-  };
+const handleLogin = (e) => {
+  e.preventDefault();
+  if (username === "admin" && password === "1234") {
+    localStorage.setItem("isAdmin", "true"); // ✅ save login
+    navigate("/admin/dashboard");
+  } else {
+    alert("Wrong credentials ❌");
+  }
+};
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-black text-white">
