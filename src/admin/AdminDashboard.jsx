@@ -25,6 +25,10 @@ import GalleryList from "./GalleryList";
 import AddMember from "./AddMember";
 import MembersList from "./MembersList";
 import ApplicationsList from "./ApplicationsList";
+// 🔥 ADD THESE (NEW)
+import AddVacancy from "./AddVacancy";
+import VacancyList from "./VacancyList";
+
 import ContactList from "./ContactList";
 import API from "../config/api";
 
@@ -35,6 +39,11 @@ export default function AdminDashboard() {
   const [members, setMembers] = useState([]);
   const [applications, setApplications] = useState([]);
   const [contacts, setContacts] = useState([]);
+
+    // 🔥 NEW STATE
+  const [vacancies, setVacancies] = useState([]);
+
+
 
   const [activePage, setActivePage] = useState("dashboard");
   const [showNotif, setShowNotif] = useState(false);
@@ -82,11 +91,13 @@ export default function AdminDashboard() {
     { key: "events", icon: Calendar },
     { key: "gallery", icon: Image },
     { key: "members", icon: Users },
+     { key: "vacancies", icon: Users }, // 🔥 NEW
     { key: "applications", icon: FileText },
     { key: "contacts", icon: MessageSquare }
   ];
 
   return (
+    
     <div className="relative flex min-h-screen bg-gradient-to-br from-[#0a0a14] via-[#11121f] to-[#1c1c1c] text-white">
 
       {/* BACKGROUND */}
@@ -237,6 +248,14 @@ export default function AdminDashboard() {
                 </div>
               ))}
             </div>
+          </>
+        )}
+
+          {/* 🔥 NEW VACANCY PAGE */}
+        {activePage === "vacancies" && (
+          <>
+            <AddVacancy reload={loadData} />
+            <VacancyList data={vacancies} reload={loadData} />
           </>
         )}
 

@@ -19,6 +19,7 @@ import AdminLogin from "./admin/AdminLogin"
 import AdminDashboard from "./admin/AdminDashboard"
 import ProtectedRoute from "./admin/ProtectedRoute";
 
+import UpcomingEvents from "./component/UpcomingEvents";
 function HomePage() {
   const location = useLocation();
 
@@ -37,6 +38,7 @@ function HomePage() {
     <>
       <Hero />
       <About />
+      <UpcomingEvents />
       <Gallery />
       <Contact />
     </>
@@ -54,6 +56,8 @@ function App() {
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/club/:clubName" element={<ClubPage />} />
         <Route path="/admin" element={<AdminLogin />} />
+
+        
 <Route 
   path="/admin/dashboard" 
   element={

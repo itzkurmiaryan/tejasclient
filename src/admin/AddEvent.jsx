@@ -2,14 +2,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import API from "../config/api";
 
-
 export default function AddEvent({ reload }) {
+
   const [name, setName] = useState("");
   const [club, setClub] = useState("");
   const [date, setDate] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
   const [highlights, setHighlights] = useState("");
+  const [isUpcoming, setIsUpcoming] = useState(true); // 🔥 NEW
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -25,6 +26,9 @@ export default function AddEvent({ reload }) {
     formData.append("description", description);
     formData.append("highlights", highlights);
 
+    // 🔥 IMPORTANT
+    formData.append("isUpcoming", isUpcoming);
+
     images.forEach((img) => formData.append("images", img));
 
     try {
@@ -33,12 +37,14 @@ export default function AddEvent({ reload }) {
         body: formData
       });
 
+      // RESET
       setName("");
       setClub("");
       setDate("");
       setDescription("");
       setImages([]);
       setHighlights("");
+      setIsUpcoming(true);
 
       reload();
     } catch (err) {
@@ -91,6 +97,16 @@ export default function AddEvent({ reload }) {
           className="input"
         />
 
+        {/* 🔥 NEW CHECKBOX */}
+        <label className="flex items-center gap-3 text-sm">
+          <input
+            type="checkbox"
+            checked={isUpcoming}
+            onChange={(e) => setIsUpcoming(e.target.checked)}
+          />
+          Mark as Upcoming Event
+        </label>
+
         <textarea
           placeholder="Description..."
           value={description}
@@ -130,7 +146,6 @@ export default function AddEvent({ reload }) {
 
       </form>
 
-      {/* INPUT STYLE */}
       <style jsx>{`
         .input {
           background: rgba(255,255,255,0.05);

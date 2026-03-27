@@ -1,31 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { motion } from "framer-motion";
+import API from "../config/api";
 
 export default function Events() {
 
-  const [events,setEvents] = useState([]);
+  const [events, setEvents] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
   const [activeClub, setActiveClub] = useState("All");
 
-  // 🔹 Backend se events load
   useEffect(() => {
-
     fetch(`${import.meta.env.VITE_API_URL}/events`)
       .then(res => res.json())
       .then(data => {
-
-        if(data && data.length > 0){
-          setEvents(data)   // ❗ Replace not merge
-        }
-
+        if (data?.length > 0) setEvents(data);
       })
-      .catch(err=>{
-        console.log("API error:",err)
-      })
+      .catch(err => console.log(err));
+  }, []);
 
-  },[])
-
-  // ===== Club Filter =====
   const clubs = [
     "All",
     "I-Tech Club",
@@ -53,7 +45,7 @@ export default function Events() {
           </span>
         </h1>
 
-        {/* CLUB FILTER */}
+        {/* FILTER */}
         <div className="flex flex-wrap justify-center gap-4 mb-20">
           {clubs.map((club) => (
             <button
@@ -62,7 +54,7 @@ export default function Events() {
               className={`px-6 py-2 rounded-full font-medium transition-all duration-300
               ${
                 activeClub === club
-                  ? "bg-gradient-to-r from-amber-400 to-pink-500 text-black shadow-lg"
+                  ? "bg-gradient-to-r from-amber-400 to-pink-500 text-black shadow-lg scale-110"
                   : "bg-white/10 hover:bg-white/20"
               }`}
             >
@@ -84,30 +76,35 @@ export default function Events() {
 
       </section>
 
-      {/* IMAGE PREVIEW */}
+      {/* 🔥 FULLSCREEN IMAGE VIEW */}
       {previewImage && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
-          onClick={() => setPreviewImage(null)}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
         >
 
           <button
-            className="absolute top-6 right-6 text-white"
             onClick={() => setPreviewImage(null)}
+            className="absolute top-6 right-6 text-white"
           >
             <X size={36} />
           </button>
 
-          <img
+          <motion.img
             src={previewImage}
-            className="max-h-[90vh] rounded-3xl shadow-2xl"
+            initial={{ scale: 0.5 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="max-h-[90vh] max-w-[90vw] rounded-3xl shadow-[0_0_60px_rgba(255,115,0,0.6)]"
           />
 
-        </div>
+        </motion.div>
       )}
     </>
   );
 }
+
 
 /* ================= EVENT ROW ================= */
 
@@ -121,22 +118,52 @@ function EventRow({ event, onImageClick }) {
   const scrollRight = () =>
     sliderRef.current.scrollBy({ left: 320, behavior: "smooth" });
 
+  const now = new Date();
+  const eventDate = new Date(event.date);
+
+  const isUpcoming = eventDate > now;
+  const isExpired = eventDate < now;
+
   return (
-    <div className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-xl hover:shadow-amber-500/20 transition-all duration-500">
+    <motion.div
+      whileHover={{ rotateX: 5, rotateY: -5, scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-xl 
+      hover:shadow-[0_0_40px_rgba(255,115,0,0.5)] transition-all duration-500"
+    >
 
       {/* HEADER */}
       <div className="mb-8">
 
         <div className="flex flex-wrap items-center gap-4">
 
-          <h2 className="text-3xl md:text-4xl font-bold">
+          <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-2">
             {event.name}
+
+            {/* 🔥 STATUS BADGES */}
+            {isUpcoming && (
+              <span className="px-3 py-1 text-xs bg-blue-500 rounded-full">
+                Upcoming
+              </span>
+            )}
+
+            {isExpired && (
+              <span className="px-3 py-1 text-xs bg-red-500 rounded-full">
+                Previous
+              </span>
+            )}
+
           </h2>
 
+          {/* 🔥 CLEAN DATE */}
           {event.date && (
             <span className="px-4 py-1 rounded-full text-sm
             bg-gradient-to-r from-amber-400 to-pink-500 text-black">
-              {event.date}
+              {eventDate.toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric"
+              })}
             </span>
           )}
 
@@ -146,31 +173,25 @@ function EventRow({ event, onImageClick }) {
           {event.club}
         </p>
 
-        {event.description && (
-          <p className="text-gray-300 mt-4 max-w-3xl leading-relaxed">
-            {event.description}
-          </p>
-        )}
+        <p className="text-gray-300 mt-4 max-w-3xl">
+          {event.description}
+        </p>
 
-        {event.highlights && (
-          <div className="flex flex-wrap gap-3 mt-4">
-            {event.highlights.map((item, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 bg-white/10 rounded-full text-sm"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        )}
-
-        <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-pink-500 mt-4 rounded-full" />
+        {/* HIGHLIGHTS */}
+        <div className="flex flex-wrap gap-3 mt-4">
+          {event.highlights?.map((item, idx) => (
+            <span
+              key={idx}
+              className="px-3 py-1 bg-white/10 rounded-full text-sm"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
 
       </div>
 
       {/* SLIDER */}
-
       <div className="relative group">
 
         <button
@@ -185,24 +206,34 @@ function EventRow({ event, onImageClick }) {
           ref={sliderRef}
           className="flex gap-8 overflow-x-scroll scrollbar-hide px-10 pb-4"
         >
-
           {event.images?.map((img, i) => (
 
-            <div
+            <motion.div
               key={i}
-              onClick={() => onImageClick(img)}
-              className="relative flex-shrink-0 w-80 h-48 rounded-3xl overflow-hidden cursor-pointer"
+              whileHover={{ scale: 1.1 }}
+              className="relative flex-shrink-0 w-80 h-48 rounded-3xl overflow-hidden cursor-pointer group"
             >
 
               <img
                 src={img}
-                className="w-full h-full object-cover hover:scale-110 transition duration-500"
+                className="w-full h-full object-cover transition duration-500 group-hover:scale-110"
               />
 
-            </div>
+              {/* 🔥 OVERLAY VIEW BUTTON */}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+
+                <button
+                  onClick={() => onImageClick(img)}
+                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full font-semibold"
+                >
+                  👁 View
+                </button>
+
+              </div>
+
+            </motion.div>
 
           ))}
-
         </div>
 
         <button
@@ -215,6 +246,6 @@ function EventRow({ event, onImageClick }) {
 
       </div>
 
-    </div>
+    </motion.div>
   );
 }

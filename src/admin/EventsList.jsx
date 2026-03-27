@@ -1,39 +1,69 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import API from "../config/api";
 
-
 export default function EventsList({ events, reload }) {
+
   const [editing, setEditing] = useState(null);
   const [expanded, setExpanded] = useState(null);
   const [form, setForm] = useState({});
   const [newImages, setNewImages] = useState([]);
   const [search, setSearch] = useState("");
+  const [timeLeft, setTimeLeft] = useState({});
 
+  // 🔥 FILTER
   const filteredEvents = events.filter(
     (event) =>
       event.name.toLowerCase().includes(search.toLowerCase()) ||
       event.club.toLowerCase().includes(search.toLowerCase())
   );
 
+  // 🔥 AUTO COUNTDOWN + LIVE
+  useEffect(() => {
+    const timer = setInterval(() => {
+
+      const times = {};
+
+      events.forEach(event => {
+        const diff = new Date(event.date) - new Date();
+
+        if (diff <= 0) {
+          times[event._id] = "LIVE";
+        } else {
+          const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const m = Math.floor((diff / (1000 * 60)) % 60);
+
+          times[event._id] = `${d}d ${h}h ${m}m`;
+        }
+      });
+
+      setTimeLeft(times);
+
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [events]);
+
+  // 🔥 DELETE
   const deleteEvent = async (id) => {
-    await fetch(`${API}/events/${id}`, {
-      method: "DELETE"
-    });
+    await fetch(`${API}/events/${id}`, { method: "DELETE" });
     reload();
   };
 
+  // 🔥 EDIT START
   const startEdit = (event) => {
     setEditing(event._id);
     setForm(event);
   };
 
+  // 🔥 SAVE EDIT
   const saveEdit = async () => {
     const formData = new FormData();
 
-    Object.keys(form).forEach((key) =>
-      formData.append(key, form[key])
-    );
+    Object.keys(form).forEach((key) => {
+      formData.append(key, form[key]);
+    });
 
     newImages.forEach((img) =>
       formData.append("images", img)
@@ -66,119 +96,176 @@ export default function EventsList({ events, reload }) {
 
       <div className="space-y-6">
 
-        {filteredEvents.map((event) => (
+        {filteredEvents.map((event) => {
 
-          <motion.div
-            key={event._id}
-            whileHover={{ scale: 1.02 }}
-            className="rounded-2xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 shadow-lg overflow-hidden"
-          >
+          const isLive = timeLeft[event._id] === "LIVE";
+          const isExpired = new Date(event.date) < new Date();
 
-            {/* HEADER */}
-            <div
-              onClick={() =>
-                setExpanded(expanded === event._id ? null : event._id)
-              }
-              className="flex justify-between p-5 cursor-pointer"
+          return (
+
+            <motion.div
+              key={event._id}
+              whileHover={{ scale: 1.03 }}
+              className="rounded-2xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 shadow-lg overflow-hidden hover:shadow-[0_0_25px_rgba(255,115,0,0.4)] transition"
             >
-              <div>
-                <h3 className="text-xl font-bold">{event.name}</h3>
-                <p className="text-gray-400 text-sm">
-                  {event.club} • {event.date}
-                </p>
-              </div>
-              <span>{expanded === event._id ? "▲" : "▼"}</span>
-            </div>
 
-            {/* DETAILS */}
-            <AnimatePresence>
-              {expanded === event._id && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="p-5 border-t border-white/10"
-                >
+              {/* HEADER */}
+              <div
+                onClick={() =>
+                  setExpanded(expanded === event._id ? null : event._id)
+                }
+                className="flex justify-between p-5 cursor-pointer"
+              >
+                <div>
+                  <h3 className="text-xl font-bold flex items-center gap-2">
 
-                  {editing === event._id ? (
-                    <>
-                      <input
-                        className="input mb-2"
-                        value={form.name}
-                        onChange={(e) =>
-                          setForm({ ...form, name: e.target.value })
-                        }
-                      />
+                    {event.name}
 
-                      <textarea
-                        className="input mb-2"
-                        value={form.description}
-                        onChange={(e) =>
-                          setForm({ ...form, description: e.target.value })
-                        }
-                      />
+                    {/* 🟢 LIVE */}
+                    {isLive && (
+                      <span className="px-2 py-1 text-xs bg-green-500 rounded-full animate-pulse">
+                        LIVE
+                      </span>
+                    )}
 
-                      <input
-                        type="file"
-                        multiple
-                        onChange={(e) =>
-                          setNewImages(Array.from(e.target.files))
-                        }
-                      />
+                    {/* ⏳ UPCOMING */}
+                    {event.isUpcoming && !isLive && !isExpired && (
+                      <span className="px-2 py-1 text-xs bg-blue-500 rounded-full">
+                        Upcoming
+                      </span>
+                    )}
 
-                      <button onClick={saveEdit} className="btn-green">
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditing(null)}
-                        className="btn-gray ml-2"
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-gray-300 mb-4">
-                        {event.description}
-                      </p>
+                    {/* ❌ EXPIRED */}
+                    {isExpired && (
+                      <span className="px-2 py-1 text-xs bg-red-500 rounded-full">
+                        Expired
+                      </span>
+                    )}
 
-                      {/* IMAGES GRID */}
-                      <div className="grid grid-cols-3 gap-3 mb-4">
-                        {event.images?.map((img, i) => (
-                          <img
-                            key={i}
-                            src={`${API}/${img}`}
-                            className="h-24 w-full object-cover rounded-lg hover:scale-105 transition"
-                          />
-                        ))}
-                      </div>
+                  </h3>
 
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => startEdit(event)}
-                          className="btn-blue"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteEvent(event._id)}
-                          className="btn-red"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </>
+                  <p className="text-gray-400 text-sm">
+                    {event.club} • {event.date}
+                  </p>
+
+                  {/* ⏳ COUNTDOWN */}
+                  {!isExpired && (
+                    <p className="text-xs text-orange-400 mt-1">
+                      ⏳ {timeLeft[event._id]}
+                    </p>
                   )}
 
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </div>
 
-          </motion.div>
-        ))}
+                <span>{expanded === event._id ? "▲" : "▼"}</span>
+              </div>
+
+              {/* DETAILS */}
+              <AnimatePresence>
+                {expanded === event._id && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="p-5 border-t border-white/10"
+                  >
+
+                    {editing === event._id ? (
+                      <>
+                        <input
+                          className="input mb-2"
+                          value={form.name}
+                          onChange={(e) =>
+                            setForm({ ...form, name: e.target.value })
+                          }
+                        />
+
+                        <textarea
+                          className="input mb-2"
+                          value={form.description}
+                          onChange={(e) =>
+                            setForm({ ...form, description: e.target.value })
+                          }
+                        />
+
+                        {/* 🔥 UPCOMING TOGGLE */}
+                        <label className="flex items-center gap-2 mb-2">
+                          <input
+                            type="checkbox"
+                            checked={form.isUpcoming || false}
+                            onChange={(e) =>
+                              setForm({
+                                ...form,
+                                isUpcoming: e.target.checked
+                              })
+                            }
+                          />
+                          Upcoming Event
+                        </label>
+
+                        <input
+                          type="file"
+                          multiple
+                          onChange={(e) =>
+                            setNewImages(Array.from(e.target.files))
+                          }
+                        />
+
+                        <button onClick={saveEdit} className="btn-green">
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditing(null)}
+                          className="btn-gray ml-2"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-gray-300 mb-4">
+                          {event.description}
+                        </p>
+
+                        {/* IMAGES */}
+                        <div className="grid grid-cols-3 gap-3 mb-4">
+                          {event.images?.map((img, i) => (
+                            <img
+                              key={i}
+                              src={`${API}/${img}`}
+                              className="h-24 w-full object-cover rounded-lg hover:scale-110 transition"
+                            />
+                          ))}
+                        </div>
+
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => startEdit(event)}
+                            className="btn-blue"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() => deleteEvent(event._id)}
+                            className="btn-red"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </>
+                    )}
+
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+            </motion.div>
+          );
+        })}
       </div>
 
-      {/* BUTTON STYLES */}
+      {/* STYLES */}
       <style jsx>{`
         .input {
           background: rgba(255,255,255,0.05);
@@ -191,6 +278,7 @@ export default function EventsList({ events, reload }) {
         .btn-green { background:#22c55e; padding:8px 14px; border-radius:8px; }
         .btn-gray { background:#6b7280; padding:8px 14px; border-radius:8px; }
       `}</style>
+
     </div>
   );
 }
