@@ -13,7 +13,6 @@ import triLogo from "../assets/tri.png";
 import profileImg from "../assets/profile.png"; 
 import API from "../config/api";
 
-
 const clubInfo = {
   rockon: {
     title: "Rock On",
@@ -76,19 +75,14 @@ export default function ClubPage() {
   const [loading, setLoading] = useState(true);
 
   // ✅ SAFE IMAGE FUNCTION
- const getImage = (photo) => {
-  if (!photo) return profileImg;
-
-  if (photo.startsWith("http")) return photo;
-
-  // ✅ FIX: remove /api from base URL
-  if (photo.startsWith("/uploads")) {
-    return `${API.replace("/api", "")}${photo}`; // 🔥 FIXED
-  }
-
-  return `${API.replace("/api", "")}/uploads/${photo}`; // 🔥 FIXED
-};
-
+  const getImage = (photo) => {
+    if (!photo) return profileImg;
+    if (photo.startsWith("http")) return photo;
+    if (photo.startsWith("/uploads")) {
+      return `${API.replace("/api", "")}${photo}`;
+    }
+    return `${API.replace("/api", "")}/uploads/${photo}`;
+  };
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -97,8 +91,7 @@ export default function ClubPage() {
         const data = await res.json();
 
         const clubData = data.filter(
-          (m) =>
-            m.club?.toLowerCase().replace(/\s/g, "") === clubName
+          (m) => m.club?.toLowerCase().replace(/\s/g, "") === clubName
         );
 
         setTeam(clubData.filter((m) => m.type === "team"));
@@ -153,9 +146,40 @@ export default function ClubPage() {
           <p className="text-lg leading-loose">{club.about}</p>
         </div>
 
-        {loading && <div className="text-center text-xl">Loading...</div>}
+        {/* ⏳ SKELETON UI LOADING STATE */}
+        {loading ? (
+          <>
+            {/* Presidential Team Skeleton */}
+            <h2 className="text-4xl font-bold mb-20 text-center">Presidential Team</h2>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 mb-36">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <div key={n} className="bg-white/5 border border-white/10 rounded-3xl p-8 text-center animate-pulse flex flex-col items-center">
+                  <div className="w-28 h-28 rounded-full bg-white/10 mb-4" />
+                  <div className="h-5 bg-white/10 rounded w-3/4 mb-3" />
+                  <div className="h-4 bg-white/10 rounded w-1/2 mb-4" />
+                  <div className="h-3 bg-white/10 rounded w-2/3 mb-2" />
+                  <div className="h-3 bg-white/10 rounded w-1/2 mb-2" />
+                  <div className="h-3 bg-white/10 rounded w-1/3" />
+                </div>
+              ))}
+            </div>
 
-        {!loading && (
+            {/* Active Members Skeleton */}
+            <h2 className="text-4xl font-bold mb-16 text-center">Active Members</h2>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <div key={n} className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center animate-pulse flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-full bg-white/10 mb-3" />
+                  <div className="h-4 bg-white/10 rounded w-4/5 mb-3" />
+                  <div className="h-3 bg-white/10 rounded w-2/3 mb-2" />
+                  <div className="h-3 bg-white/10 rounded w-1/2 mb-2" />
+                  <div className="h-3 bg-white/10 rounded w-1/3" />
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          /* 🚀 REAL DATA STATE */
           <>
             <h2 className="text-4xl font-bold mb-20 text-center">Presidential Team</h2>
 

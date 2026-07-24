@@ -1,21 +1,44 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
-import API from "../config/api";
+
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://abhiruchi-backend.onrender.com/api";
 
 export default function Events() {
-
   const [events, setEvents] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
   const [activeClub, setActiveClub] = useState("All");
 
+  // NEW STATES
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await fetch(`${API_URL}/events`, {
+        cache: "no-store",
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch events");
+
+      const data = await res.json();
+
+      setEvents(data || []);
+    } catch (err) {
+      console.error(err);
+      setError("Unable to load events.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/events`)
-      .then(res => res.json())
-      .then(data => {
-        if (data?.length > 0) setEvents(data);
-      })
-      .catch(err => console.log(err));
+    fetchEvents();
   }, []);
 
   const clubs = [
@@ -63,27 +86,69 @@ export default function Events() {
           ))}
         </div>
 
+        {/* ERROR */}
+        {error && (
+          <div className="max-w-xl mx-auto text-center mb-12">
+
+            <div className="bg-red-500/20 border border-red-500 rounded-xl p-6">
+
+              <p className="text-red-300 mb-5">{error}</p>
+
+              <button
+                onClick={fetchEvents}
+                className="flex items-center gap-2 mx-auto bg-gradient-to-r from-orange-500 to-pink-500 px-5 py-2 rounded-full"
+              >
+                <RefreshCw size={18} />
+                Retry
+              </button>
+
+            </div>
+
+          </div>
+        )}
+
+        {/* LOADING */}
+        {loading && (
+          <div className="max-w-7xl mx-auto space-y-20">
+
+            {[1, 2, 3].map((item) => (
+              <SkeletonCard key={item} />
+            ))}
+
+          </div>
+        )}
+
         {/* EVENTS */}
-        <div className="max-w-7xl mx-auto space-y-28">
-          {filteredEvents.map((event, index) => (
-            <EventRow
-              key={event._id || index}
-              event={event}
-              onImageClick={setPreviewImage}
-            />
-          ))}
-        </div>
+        {!loading && !error && (
+          <div className="max-w-7xl mx-auto space-y-28">
+
+            {filteredEvents.length === 0 ? (
+              <div className="text-center text-gray-400 text-xl">
+                No events found.
+              </div>
+            ) : (
+              filteredEvents.map((event, index) => (
+                <EventRow
+                  key={event._id || index}
+                  event={event}
+                  onImageClick={setPreviewImage}
+                />
+              ))
+            )}
+
+          </div>
+        )}
 
       </section>
 
-      {/* 🔥 FULLSCREEN IMAGE VIEW */}
+      {/* IMAGE PREVIEW */}
+
       {previewImage && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
         >
-
           <button
             onClick={() => setPreviewImage(null)}
             className="absolute top-6 right-6 text-white"
@@ -93,30 +158,85 @@ export default function Events() {
 
           <motion.img
             src={previewImage}
-            initial={{ scale: 0.5 }}
+            initial={{ scale: 0.6 }}
             animate={{ scale: 1 }}
-            transition={{ duration: 0.4 }}
-            className="max-h-[90vh] max-w-[90vw] rounded-3xl shadow-[0_0_60px_rgba(255,115,0,0.6)]"
+            className="max-h-[90vh] max-w-[90vw] rounded-3xl"
           />
-
         </motion.div>
       )}
     </>
   );
 }
+/* ===========================
+   PREMIUM SKELETON CARD
+=========================== */
+
+function SkeletonCard() {
+  return (
+    <div className="relative overflow-hidden bg-white/5 backdrop-blur-xl rounded-3xl p-8">
+
+      {/* shimmer */}
+      <div className="absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+      {/* title */}
+      <div className="h-8 w-72 bg-white/10 rounded-lg animate-pulse mb-5"></div>
+
+      {/* club */}
+      <div className="h-5 w-40 bg-white/10 rounded animate-pulse mb-6"></div>
+
+      {/* description */}
+      <div className="space-y-3 mb-8">
+        <div className="h-4 bg-white/10 rounded animate-pulse"></div>
+        <div className="h-4 bg-white/10 rounded animate-pulse"></div>
+        <div className="h-4 w-3/4 bg-white/10 rounded animate-pulse"></div>
+      </div>
+
+      {/* highlights */}
+      <div className="flex gap-3 flex-wrap mb-8">
+        {[1,2,3,4].map(i=>(
+          <div
+            key={i}
+            className="h-8 w-24 rounded-full bg-white/10 animate-pulse"
+          />
+        ))}
+      </div>
+
+      {/* images */}
+      <div className="flex gap-6 overflow-hidden">
+
+        {[1,2,3].map(i=>(
+          <div
+            key={i}
+            className="w-80 h-48 rounded-3xl bg-white/10 animate-pulse flex-shrink-0"
+          />
+        ))}
+
+      </div>
+
+    </div>
+  );
+}
 
 
-/* ================= EVENT ROW ================= */
+/* ===========================
+        EVENT ROW
+=========================== */
 
 function EventRow({ event, onImageClick }) {
 
   const sliderRef = useRef(null);
 
   const scrollLeft = () =>
-    sliderRef.current.scrollBy({ left: -320, behavior: "smooth" });
+    sliderRef.current?.scrollBy({
+      left: -320,
+      behavior: "smooth",
+    });
 
   const scrollRight = () =>
-    sliderRef.current.scrollBy({ left: 320, behavior: "smooth" });
+    sliderRef.current?.scrollBy({
+      left: 320,
+      behavior: "smooth",
+    });
 
   const now = new Date();
   const eventDate = new Date(event.date);
@@ -126,120 +246,149 @@ function EventRow({ event, onImageClick }) {
 
   return (
     <motion.div
-      whileHover={{ rotateX: 5, rotateY: -5, scale: 1.02 }}
-      transition={{ duration: 0.3 }}
-      className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-xl 
-      hover:shadow-[0_0_40px_rgba(255,115,0,0.5)] transition-all duration-500"
+      initial={{ opacity: 0, y: 35 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: .5 }}
+      whileHover={{
+        rotateX: 4,
+        rotateY: -4,
+        scale: 1.01,
+      }}
+      className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-xl
+      hover:shadow-[0_0_40px_rgba(255,115,0,0.5)]
+      transition-all duration-500"
     >
 
       {/* HEADER */}
+
       <div className="mb-8">
 
         <div className="flex flex-wrap items-center gap-4">
 
-          <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-2">
+          <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+
             {event.name}
 
-            {/* 🔥 STATUS BADGES */}
             {isUpcoming && (
-              <span className="px-3 py-1 text-xs bg-blue-500 rounded-full">
+              <span className="px-3 py-1 rounded-full text-xs bg-blue-500">
                 Upcoming
               </span>
             )}
 
             {isExpired && (
-              <span className="px-3 py-1 text-xs bg-red-500 rounded-full">
+              <span className="px-3 py-1 rounded-full text-xs bg-red-500">
                 Previous
               </span>
             )}
 
           </h2>
 
-          {/* 🔥 CLEAN DATE */}
           {event.date && (
             <span className="px-4 py-1 rounded-full text-sm
-            bg-gradient-to-r from-amber-400 to-pink-500 text-black">
-              {eventDate.toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-                year: "numeric"
+            bg-gradient-to-r
+            from-amber-400
+            to-pink-500
+            text-black">
+
+              {eventDate.toLocaleDateString("en-IN",{
+                day:"numeric",
+                month:"short",
+                year:"numeric",
               })}
+
             </span>
           )}
 
         </div>
 
-        <p className="text-amber-400 mt-2">
+        <p className="text-amber-400 mt-3">
           {event.club}
         </p>
 
-        <p className="text-gray-300 mt-4 max-w-3xl">
+        <p className="text-gray-300 mt-5 leading-7 max-w-4xl">
           {event.description}
         </p>
 
-        {/* HIGHLIGHTS */}
-        <div className="flex flex-wrap gap-3 mt-4">
-          {event.highlights?.map((item, idx) => (
+        <div className="flex flex-wrap gap-3 mt-5">
+
+          {event.highlights?.map((item,index)=>(
             <span
-              key={idx}
-              className="px-3 py-1 bg-white/10 rounded-full text-sm"
+              key={index}
+              className="px-3 py-1 rounded-full bg-white/10 text-sm"
             >
               {item}
             </span>
           ))}
+
         </div>
 
       </div>
-
-      {/* SLIDER */}
+            {/* IMAGE SLIDER */}
       <div className="relative group">
 
         <button
           onClick={scrollLeft}
           className="absolute left-2 top-1/2 -translate-y-1/2 z-10
-          bg-black/60 p-3 rounded-full opacity-0 group-hover:opacity-100"
+          bg-black/60 p-3 rounded-full
+          opacity-0 group-hover:opacity-100
+          transition"
         >
           <ChevronLeft size={28} />
         </button>
 
         <div
           ref={sliderRef}
-          className="flex gap-8 overflow-x-scroll scrollbar-hide px-10 pb-4"
+          className="flex gap-8 overflow-x-auto scrollbar-hide px-10 pb-4 scroll-smooth"
         >
           {event.images?.map((img, i) => (
-
             <motion.div
               key={i}
-              whileHover={{ scale: 1.1 }}
-              className="relative flex-shrink-0 w-80 h-48 rounded-3xl overflow-hidden cursor-pointer group"
+              whileHover={{ scale: 1.06 }}
+              className="relative flex-shrink-0
+              w-80 h-48 rounded-3xl overflow-hidden
+              cursor-pointer group"
             >
-
               <img
                 src={img}
-                className="w-full h-full object-cover transition duration-500 group-hover:scale-110"
+                alt={`${event.name} ${i + 1}`}
+                loading="lazy"
+                decoding="async"
+                onClick={() => onImageClick(img)}
+                className="w-full h-full object-cover
+                transition duration-500
+                group-hover:scale-110"
               />
 
-              {/* 🔥 OVERLAY VIEW BUTTON */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-
+              <div
+                className="absolute inset-0
+                bg-black/50
+                opacity-0
+                group-hover:opacity-100
+                flex items-center justify-center
+                transition"
+              >
                 <button
                   onClick={() => onImageClick(img)}
-                  className="px-4 py-2 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full font-semibold"
+                  className="px-4 py-2 rounded-full
+                  bg-gradient-to-r
+                  from-orange-500
+                  to-pink-500
+                  font-semibold"
                 >
                   👁 View
                 </button>
-
               </div>
-
             </motion.div>
-
           ))}
         </div>
 
         <button
           onClick={scrollRight}
           className="absolute right-2 top-1/2 -translate-y-1/2 z-10
-          bg-black/60 p-3 rounded-full opacity-0 group-hover:opacity-100"
+          bg-black/60 p-3 rounded-full
+          opacity-0 group-hover:opacity-100
+          transition"
         >
           <ChevronRight size={28} />
         </button>

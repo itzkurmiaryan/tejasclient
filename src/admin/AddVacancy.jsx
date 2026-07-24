@@ -1,7 +1,7 @@
 import { useState } from "react";
 import API from "../config/api";
 
-/* ===== CLUB DATA (same as JoinUs) ===== */
+/* ===== CLUB DATA ===== */
 const clubsData = [
   "Panache – The Arts Club",
   "Rock On – The Cultural Club",
@@ -12,8 +12,18 @@ const clubsData = [
   "The Responsible Invertian – The Social Cause Club"
 ];
 
-export default function AddVacancy({ reload }) {
+/* ===== POSITIONS DATA ===== */
+const positionsData = [
+  "President",
+  "Vice President",
+  "Secretary",
+  "Joint Secretary",
+  "Treasurer",
+  "Member",
+  "Coordinator"
+];
 
+export default function AddVacancy({ reload }) {
   const [form, setForm] = useState({
     club: "",
     post: "Member",
@@ -25,8 +35,8 @@ export default function AddVacancy({ reload }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.club.trim() || !form.seats) {
-      alert("All fields required");
+    if (!form.club.trim() || !form.post.trim() || !form.seats) {
+      alert("❌ All fields are required!");
       return;
     }
 
@@ -46,14 +56,16 @@ export default function AddVacancy({ reload }) {
       });
 
       const data = await res.json();
-      console.log("RESPONSE:", data);
 
       if (!res.ok) {
-        alert(data.message);
+        const errorMsg = Array.isArray(data.details) 
+          ? data.details.join(", ") 
+          : (data.message || JSON.stringify(data));
+        alert(`❌ Server Rejected: ${errorMsg}`);
         return;
       }
 
-      alert("✅ Vacancy Added");
+      alert(`✅ Vacancy Successfully Added for ${form.post}!`);
 
       setForm({
         club: "",
@@ -61,61 +73,76 @@ export default function AddVacancy({ reload }) {
         seats: ""
       });
 
-      reload();
+      if (reload) reload();
 
     } catch (err) {
-      console.log(err);
-      alert("Server error");
+      console.error("FRONTEND CATCH ERROR:", err);
+      alert(`💥 Connection Error: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
-    <div className="p-6 bg-white/5 rounded-2xl mb-6">
+    <div className="p-8 bg-neutral-900/40 border border-white/10 backdrop-blur-xl rounded-[2rem] mb-10 shadow-2xl shadow-black/50">
+      <h2 className="text-xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 flex items-center gap-2">
+        ✨ Post New Opening / Vacancy
+      </h2>
 
-      <h2 className="text-xl mb-4 text-orange-400">Add Vacancy</h2>
+      <form onSubmit={handleSubmit} className="flex gap-5 flex-wrap items-end">
+        
+        {/* Club Dropdown */}
+        <div className="flex flex-col gap-2 min-w-[260px] flex-1">
+          <label className="text-xs text-gray-400 font-semibold uppercase tracking-wider px-1">Select Target Club</label>
+          <select
+            value={form.club}
+            onChange={(e) => setForm({ ...form, club: e.target.value })}
+            className="p-3 rounded-2xl bg-black/50 border border-white/5 text-white focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30 transition-all w-full cursor-pointer h-12"
+            required
+          >
+            <option value="" className="bg-neutral-950 text-gray-500">-- Choose Club --</option>
+            {clubsData.map((club, i) => (
+              <option key={i} value={club} className="bg-neutral-950 text-white">{club}</option>
+            ))}
+          </select>
+        </div>
 
-      <form onSubmit={handleSubmit} className="flex gap-3 flex-wrap">
+        {/* Position Dropdown */}
+        <div className="flex flex-col gap-2 min-w-[200px] flex-1">
+          <label className="text-xs text-gray-400 font-semibold uppercase tracking-wider px-1">Designation</label>
+          <select
+            value={form.post}
+            onChange={(e) => setForm({ ...form, post: e.target.value })}
+            className="p-3 rounded-2xl bg-black/50 border border-white/5 text-white focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30 transition-all w-full cursor-pointer h-12"
+            required
+          >
+            {positionsData.map((pos, i) => (
+              <option key={i} value={pos} className="bg-neutral-950 text-white">{pos}</option>
+            ))}
+          </select>
+        </div>
 
-        {/* ✅ CHANGE 1: Club select dropdown instead of text input */}
-        <select
-          value={form.club}
-          onChange={(e) => setForm({ ...form, club: e.target.value })}
-          className="p-2 rounded bg-black/30"
-          required
+        {/* Seats Count */}
+        <div className="flex flex-col gap-2 w-28">
+          <label className="text-xs text-gray-400 font-semibold uppercase tracking-wider px-1">Openings</label>
+          <input
+            type="number"
+            min="1"
+            placeholder="Qty"
+            value={form.seats}
+            onChange={(e) => setForm({ ...form, seats: e.target.value })}
+            className="p-3 rounded-2xl bg-black/50 border border-white/5 text-white focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30 transition-all w-full text-center h-12"
+            required
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-white hover:bg-gray-100 text-black font-bold px-8 rounded-2xl shadow-lg hover:shadow-white/5 active:scale-95 transition-all h-12 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <option value="">Select Club</option>
-          {clubsData.map((club, i) => (
-            <option key={i} value={club}>{club}</option>
-          ))}
-        </select>
-
-        <select
-          value={form.post}
-          onChange={(e) => setForm({ ...form, post: e.target.value })}
-          className="p-2 rounded bg-black/30"
-        >
-          <option value="President">President</option>
-          <option value="Vice President">Vice President</option>
-          <option value="Member">Secretary</option>
-          <option value="Coordinator">Joint Secretary</option>
-          <option value="Lead">Treasurer</option>
-          <option value="Lead">Member</option>
-        </select>
-
-        <input
-          type="number"
-          min="1"
-          placeholder="Seats"
-          value={form.seats}
-          onChange={(e) => setForm({ ...form, seats: e.target.value })}
-          className="p-2 rounded bg-black/30"
-          required
-        />
-
-        <button className="bg-orange-500 px-4 py-2 rounded">
-          {loading ? "Adding..." : "Add Vacancy"}
+          {loading ? "Publishing..." : "Publish"}
         </button>
 
       </form>
