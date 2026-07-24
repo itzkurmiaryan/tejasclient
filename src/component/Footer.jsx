@@ -33,7 +33,7 @@ export default function Footer() {
           </h2>
 
           <p className="text-gray-400 leading-relaxed max-w-sm">
-            Abhiruchi – The Hobby Club of Invertis University.  
+            Abhiruchi – The Hobby Club of Invertis University.
             Where creativity, innovation & passion grow beyond classrooms.
           </p>
 
@@ -75,7 +75,7 @@ export default function Footer() {
           </h3>
 
           <div className="flex gap-5 flex-wrap">
-            {[ 
+            {[
               { icon: Phone, link: "https://wa.me/7524917394" },
               { icon: Instagram, link: "https://www.instagram.com/abhiruchi_invertisuniversity/" },
               { icon: Facebook, link: "https://www.facebook.com/profile.php?id=100078066442257" },
@@ -114,7 +114,15 @@ export default function Footer() {
       <div className="relative z-10 border-t border-white/10 py-6 text-center text-sm text-gray-500">
         © {new Date().getFullYear()} Abhiruchi – The Hobby Club, Invertis University
         <span className="block mt-1 text-gray-600">
-          Designed & Developed by <span className="text-orange-400">AlphaAryx (Aryan)</span>
+          Designed & Developed by 
+          <a
+            href="https://alphaaryx.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-orange-400 hover:underline inline-flex items-center"
+          >
+            AlphaAryX (Aryan)
+          </a>
         </span>
       </div>
     </footer>

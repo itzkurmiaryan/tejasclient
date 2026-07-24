@@ -1,151 +1,188 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import API from "../config/api";
 
-/* ===== CLUB DATA ===== */
-const clubsData = [
+const clubs = [
   "Panache – The Arts Club",
   "Rock On – The Cultural Club",
   "I-Tech – The Technical Club",
   "Images – The Publication Club",
   "Stride – The Sports Club",
   "M-Factor – The Management Club",
-  "The Responsible Invertian – The Social Cause Club"
+  "The Responsible Invertian – The Social Cause Club",
 ];
 
-/* ===== POSITIONS DATA ===== */
-const positionsData = [
+const posts = [
   "President",
   "Vice President",
   "Secretary",
   "Joint Secretary",
   "Treasurer",
+  "Coordinator",
   "Member",
-  "Coordinator"
 ];
 
 export default function AddVacancy({ reload }) {
-  const [form, setForm] = useState({
-    club: "",
-    post: "Member",
-    seats: ""
-  });
-
+  const [club, setClub] = useState("");
+  const [post, setPost] = useState("Member");
+  const [seats, setSeats] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-
-    if (!form.club.trim() || !form.post.trim() || !form.seats) {
-      alert("❌ All fields are required!");
-      return;
-    }
-
     setLoading(true);
 
     try {
       const res = await fetch(`${API}/vacancies`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          club: form.club.trim(),
-          post: form.post.trim(),
-          seats: Number(form.seats)
-        })
+          club,
+          post,
+          seats: Number(seats),
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        const errorMsg = Array.isArray(data.details) 
-          ? data.details.join(", ") 
-          : (data.message || JSON.stringify(data));
-        alert(`❌ Server Rejected: ${errorMsg}`);
-        return;
+        throw new Error(data.message || "Failed to add vacancy");
       }
 
-      alert(`✅ Vacancy Successfully Added for ${form.post}!`);
+      alert("🎉 Vacancy Published Successfully!");
 
-      setForm({
-        club: "",
-        post: "Member",
-        seats: ""
-      });
+      setClub("");
+      setPost("Member");
+      setSeats("");
 
-      if (reload) reload();
-
+      reload && reload();
     } catch (err) {
-      console.error("FRONTEND CATCH ERROR:", err);
-      alert(`💥 Connection Error: ${err.message}`);
+      alert(`❌ ${err.message}`);
+      console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <div className="p-8 bg-neutral-900/40 border border-white/10 backdrop-blur-xl rounded-[2rem] mb-10 shadow-2xl shadow-black/50">
-      <h2 className="text-xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 flex items-center gap-2">
-        ✨ Post New Opening / Vacancy
-      </h2>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="relative mb-12 p-6 sm:p-8 rounded-3xl bg-slate-900/60 backdrop-blur-2xl border border-white/10 shadow-2xl overflow-hidden"
+    >
+      {/* AMBIENT TOP GLOW ACCENT */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-amber-500" />
+      <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <form onSubmit={handleSubmit} className="flex gap-5 flex-wrap items-end">
-        
-        {/* Club Dropdown */}
-        <div className="flex flex-col gap-2 min-w-[260px] flex-1">
-          <label className="text-xs text-gray-400 font-semibold uppercase tracking-wider px-1">Select Target Club</label>
-          <select
-            value={form.club}
-            onChange={(e) => setForm({ ...form, club: e.target.value })}
-            className="p-3 rounded-2xl bg-black/50 border border-white/5 text-white focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30 transition-all w-full cursor-pointer h-12"
-            required
-          >
-            <option value="" className="bg-neutral-950 text-gray-500">-- Choose Club --</option>
-            {clubsData.map((club, i) => (
-              <option key={i} value={club} className="bg-neutral-950 text-white">{club}</option>
-            ))}
-          </select>
+      {/* HEADER SECTION */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-2">
+        <div>
+          <span className="text-[10px] font-black uppercase tracking-widest text-purple-400 bg-purple-500/10 border border-purple-500/20 px-3 py-1 rounded-full">
+            Admin Console
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-white mt-2 tracking-tight">
+            Publish New <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-amber-400 bg-clip-text text-transparent">Vacancy</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+            Create an official recruitment opening for students
+          </p>
         </div>
 
-        {/* Position Dropdown */}
-        <div className="flex flex-col gap-2 min-w-[200px] flex-1">
-          <label className="text-xs text-gray-400 font-semibold uppercase tracking-wider px-1">Designation</label>
-          <select
-            value={form.post}
-            onChange={(e) => setForm({ ...form, post: e.target.value })}
-            className="p-3 rounded-2xl bg-black/50 border border-white/5 text-white focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30 transition-all w-full cursor-pointer h-12"
-            required
-          >
-            {positionsData.map((pos, i) => (
-              <option key={i} value={pos} className="bg-neutral-950 text-white">{pos}</option>
-            ))}
-          </select>
+        <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-400 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          Live Publishing Mode
+        </div>
+      </div>
+
+      {/* FORM SECTION */}
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* SELECT CLUB */}
+        <div className="flex flex-col gap-1.5 md:col-span-2">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Target Club *
+          </label>
+          <div className="relative">
+            <select
+              className="w-full bg-slate-950/80 border border-white/10 focus:border-purple-500/80 rounded-2xl px-4 py-3.5 text-sm text-white outline-none transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer"
+              value={club}
+              onChange={(e) => setClub(e.target.value)}
+              required
+            >
+              <option value="" disabled className="text-slate-500 bg-slate-900">
+                -- Select a Club --
+              </option>
+              {clubs.map((c) => (
+                <option key={c} value={c} className="bg-slate-900 text-white">
+                  {c}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+              ▼
+            </div>
+          </div>
         </div>
 
-        {/* Seats Count */}
-        <div className="flex flex-col gap-2 w-28">
-          <label className="text-xs text-gray-400 font-semibold uppercase tracking-wider px-1">Openings</label>
+        {/* SELECT POST */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Position / Role *
+          </label>
+          <div className="relative">
+            <select
+              className="w-full bg-slate-950/80 border border-white/10 focus:border-purple-500/80 rounded-2xl px-4 py-3.5 text-sm text-white outline-none transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer"
+              value={post}
+              onChange={(e) => setPost(e.target.value)}
+            >
+              {posts.map((p) => (
+                <option key={p} value={p} className="bg-slate-900 text-white">
+                  {p}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+              ▼
+            </div>
+          </div>
+        </div>
+
+        {/* INPUT SEATS */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+            Total Open Seats *
+          </label>
           <input
+            className="w-full bg-slate-950/80 border border-white/10 focus:border-purple-500/80 rounded-2xl px-4 py-3.5 text-sm text-white placeholder-slate-500 outline-none transition-all duration-200 focus:ring-2 focus:ring-purple-500/20"
             type="number"
-            min="1"
-            placeholder="Qty"
-            value={form.seats}
-            onChange={(e) => setForm({ ...form, seats: e.target.value })}
-            className="p-3 rounded-2xl bg-black/50 border border-white/5 text-white focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/30 transition-all w-full text-center h-12"
+            min={1}
+            placeholder="e.g. 5"
+            value={seats}
+            onChange={(e) => setSeats(e.target.value)}
             required
           />
         </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-white hover:bg-gray-100 text-black font-bold px-8 rounded-2xl shadow-lg hover:shadow-white/5 active:scale-95 transition-all h-12 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-        >
-          {loading ? "Publishing..." : "Publish"}
-        </button>
-
+        {/* SUBMIT BUTTON */}
+        <div className="md:col-span-2 mt-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-extrabold text-sm tracking-wide shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 hover:scale-[1.005] active:scale-[0.99] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Publishing Openings...</span>
+              </>
+            ) : (
+              <span>Publish Vacancy Spot ✨</span>
+            )}
+          </button>
+        </div>
       </form>
-    </div>
+    </motion.div>
   );
 }
