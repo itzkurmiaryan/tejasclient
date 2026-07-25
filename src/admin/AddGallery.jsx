@@ -60,12 +60,59 @@ export default function AddGallery({ reload }) {
           required
         />
 
-        <input
-          placeholder="Gradient (Tailwind)"
+        <select
           value={gradient}
           onChange={(e) => setGradient(e.target.value)}
           className="input"
-        />
+        >
+          <option value="from-purple-500 to-pink-500">
+            🟣 Purple → Pink
+          </option>
+
+          <option value="from-blue-500 to-cyan-500">
+            🔵 Blue → Cyan
+          </option>
+
+          <option value="from-indigo-600 via-purple-600 to-pink-500">
+            🚀 AI Startup
+          </option>
+
+          <option value="from-green-500 to-emerald-500">
+            🟢 Green → Emerald
+          </option>
+
+          <option value="from-orange-500 to-red-500">
+            🟠 Orange → Red
+          </option>
+
+          <option value="from-yellow-400 to-orange-500">
+            🌅 Sunset
+          </option>
+
+          <option value="from-teal-500 to-cyan-500">
+            🌊 Ocean
+          </option>
+
+          <option value="from-fuchsia-500 to-rose-500">
+            🌸 Rose
+          </option>
+
+          <option value="from-violet-600 to-indigo-600">
+            💎 Premium Violet
+          </option>
+
+          <option value="from-slate-800 via-slate-900 to-black">
+            ⚫ Dark Premium
+          </option>
+
+          <option value="from-pink-500 via-purple-500 to-indigo-500">
+            🌈 Aurora
+          </option>
+
+          <option value="from-lime-500 to-green-600">
+            🍃 Nature
+          </option>
+        </select>
 
         <textarea
           placeholder="Caption..."
