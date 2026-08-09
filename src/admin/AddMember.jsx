@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import API from "../config/api";
 
@@ -14,13 +14,15 @@ export default function AddMember({ reload }) {
   });
 
   const [photo, setPhoto] = useState(null);
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState("");
   const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  // =======================
+  // =====================================================
   // FETCH CLUBS
-  // =======================
+  // =====================================================
+
   useEffect(() => {
     const fetchClubs = async () => {
       try {
@@ -32,9 +34,9 @@ export default function AddMember({ reload }) {
 
         const data = await res.json();
 
-        setClubs(data);
+        setClubs(data || []);
 
-        if (data.length > 0) {
+        if (data?.length > 0) {
           setForm((prev) => ({
             ...prev,
             club: data[0].name,
@@ -42,57 +44,62 @@ export default function AddMember({ reload }) {
         }
       } catch (err) {
         console.error("CLUB FETCH ERROR:", err);
+        setError("Unable to load clubs.");
       }
     };
 
     fetchClubs();
   }, []);
 
-  // =======================
+  // =====================================================
   // IMAGE SELECT
-  // =======================
+  // =====================================================
+
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
 
     if (!file) return;
 
-    // Image validation
+    setError("");
+
     if (!file.type.startsWith("image/")) {
-      alert("Please select an image file.");
+      setError("Please select an image file.");
       return;
     }
 
-    // 5 MB limit
     if (file.size > 5 * 1024 * 1024) {
-      alert("Image size must be less than 5 MB.");
+      setError("Image size must be less than 5 MB.");
       return;
     }
 
     setPhoto(file);
 
-    // Remove old preview
     if (preview) {
       URL.revokeObjectURL(preview);
     }
 
-    setPreview(URL.createObjectURL(file));
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
   };
 
-  // =======================
+  // =====================================================
   // SUBMIT
-  // =======================
+  // =====================================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (loading) return;
 
+    setError("");
+
     if (!form.club) {
-      alert("Please select a club.");
+      setError("Please select a club.");
       return;
     }
 
     if (!form.name.trim()) {
-      alert("Please enter member name.");
+      setError("Please enter member name.");
       return;
     }
 
@@ -101,9 +108,13 @@ export default function AddMember({ reload }) {
     try {
       const formData = new FormData();
 
-      Object.keys(form).forEach((key) => {
-        formData.append(key, form[key]);
-      });
+      formData.append("club", form.club);
+      formData.append("type", form.type);
+      formData.append("role", form.role);
+      formData.append("name", form.name);
+      formData.append("course", form.course);
+      formData.append("branch", form.branch);
+      formData.append("year", form.year);
 
       if (photo) {
         formData.append("photo", photo);
@@ -122,13 +133,9 @@ export default function AddMember({ reload }) {
         );
       }
 
-      console.log("Member Added:", data);
+      console.log("MEMBER ADDED:", data);
 
-      alert("Member added successfully ✅");
-
-      // =======================
-      // RESET FORM
-      // =======================
+      // Reset
       setForm({
         club: clubs[0]?.name || "",
         type: "team",
@@ -145,22 +152,23 @@ export default function AddMember({ reload }) {
         URL.revokeObjectURL(preview);
       }
 
-      setPreview(null);
+      setPreview("");
 
-      // Reload member list
       reload();
+
+      alert("Member added successfully ✅");
     } catch (err) {
       console.error("ADD MEMBER ERROR:", err);
-
-      alert(err.message || "Failed to add member");
+      setError(err.message || "Failed to add member");
     } finally {
       setLoading(false);
     }
   };
 
-  // =======================
-  // CLEAN PREVIEW
-  // =======================
+  // =====================================================
+  // CLEANUP
+  // =====================================================
+
   useEffect(() => {
     return () => {
       if (preview) {
@@ -175,15 +183,22 @@ export default function AddMember({ reload }) {
       animate={{ opacity: 1, y: 0 }}
       className="mb-10 p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(0,255,200,0.2)]"
     >
-      <h2 className="text-3xl font-bold mb-6 text-green-400">
+      <h2 className="text-3xl font-bold mb-8 text-green-400">
         Add Member 👥
       </h2>
+
+      {error && (
+        <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300">
+          {error}
+        </div>
+      )}
 
       <form
         onSubmit={handleSubmit}
         className="grid md:grid-cols-2 gap-6"
       >
         {/* CLUB */}
+
         <select
           value={form.club}
           onChange={(e) =>
@@ -195,18 +210,19 @@ export default function AddMember({ reload }) {
           className="input"
           required
         >
-          {clubs.length === 0 && (
+          {clubs.length === 0 ? (
             <option value="">Loading clubs...</option>
+          ) : (
+            clubs.map((club) => (
+              <option key={club._id} value={club.name}>
+                {club.name}
+              </option>
+            ))
           )}
-
-          {clubs.map((club) => (
-            <option key={club._id} value={club.name}>
-              {club.name}
-            </option>
-          ))}
         </select>
 
         {/* TYPE */}
+
         <select
           value={form.type}
           onChange={(e) =>
@@ -217,24 +233,17 @@ export default function AddMember({ reload }) {
           }
           className="input"
         >
-          <option value="team">Team</option>
-          <option value="member">Member</option>
+          <option value="team">
+            Presidential Team
+          </option>
+
+          <option value="member">
+            Active Member
+          </option>
         </select>
 
-        {/* ROLE */}
-        <input
-          placeholder="Role"
-          value={form.role}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              role: e.target.value,
-            })
-          }
-          className="input"
-        />
-
         {/* NAME */}
+
         <input
           placeholder="Full Name"
           value={form.name}
@@ -248,7 +257,22 @@ export default function AddMember({ reload }) {
           required
         />
 
+        {/* ROLE */}
+
+        <input
+          placeholder="Role"
+          value={form.role}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              role: e.target.value,
+            })
+          }
+          className="input"
+        />
+
         {/* COURSE */}
+
         <input
           placeholder="Course"
           value={form.course}
@@ -262,6 +286,7 @@ export default function AddMember({ reload }) {
         />
 
         {/* BRANCH */}
+
         <input
           placeholder="Branch"
           value={form.branch}
@@ -275,6 +300,7 @@ export default function AddMember({ reload }) {
         />
 
         {/* YEAR */}
+
         <input
           placeholder="Year"
           value={form.year}
@@ -287,7 +313,8 @@ export default function AddMember({ reload }) {
           className="input"
         />
 
-        {/* IMAGE */}
+        {/* PHOTO */}
+
         <div className="md:col-span-2">
           <label className="block text-sm text-gray-300 mb-2">
             Member Photo
@@ -301,27 +328,34 @@ export default function AddMember({ reload }) {
           />
 
           {preview && (
-            <div className="mt-4">
+            <div className="mt-5 flex items-center gap-5">
               <img
                 src={preview}
                 alt="Preview"
                 className="w-28 h-28 rounded-full object-cover border-2 border-green-400"
               />
 
-              <p className="text-xs text-gray-400 mt-2">
-                Max size: 5 MB
-              </p>
+              <div>
+                <p className="text-green-400 font-semibold">
+                  Image selected ✓
+                </p>
+
+                <p className="text-xs text-gray-400 mt-1">
+                  Maximum size: 5 MB
+                </p>
+              </div>
             </div>
           )}
         </div>
 
         {/* BUTTON */}
+
         <motion.button
           type="submit"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
           disabled={loading}
-          className="md:col-span-2 py-4 rounded-xl bg-gradient-to-r from-green-400 to-emerald-600 font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="md:col-span-2 py-4 rounded-xl bg-gradient-to-r from-green-400 to-emerald-600 font-bold shadow-lg disabled:opacity-50"
         >
           {loading ? "Uploading..." : "Add Member"}
         </motion.button>
