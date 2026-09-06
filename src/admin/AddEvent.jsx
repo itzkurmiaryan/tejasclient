@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import API from "../config/api";
 
 export default function AddEvent({ reload }) {
@@ -10,6 +10,7 @@ export default function AddEvent({ reload }) {
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
   const [highlights, setHighlights] = useState("");
+  const [requirements, setRequirements] = useState([]);
   const [isUpcoming, setIsUpcoming] = useState(true); // 🔥 NEW
   const [loading, setLoading] = useState(false);
 
@@ -25,6 +26,7 @@ export default function AddEvent({ reload }) {
     formData.append("date", date);
     formData.append("description", description);
     formData.append("highlights", highlights);
+    formData.append("requirements", JSON.stringify(requirements));
 
     // 🔥 IMPORTANT
     formData.append("isUpcoming", isUpcoming);
@@ -44,6 +46,7 @@ export default function AddEvent({ reload }) {
       setDescription("");
       setImages([]);
       setHighlights("");
+      setRequirements([]);
       setIsUpcoming(true);
 
       reload();
@@ -55,7 +58,7 @@ export default function AddEvent({ reload }) {
   };
 
   return (
-    <motion.div
+    <Motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       className="mb-10 p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_0_40px_rgba(255,115,0,0.2)]"
@@ -115,6 +118,29 @@ export default function AddEvent({ reload }) {
           required
         />
 
+        <div className="md:col-span-2 rounded-2xl border border-white/10 bg-black/20 p-5">
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <h3 className="font-bold text-lg text-[#c7d96b]">Participation Requirements</h3>
+              <p className="text-xs text-white/50 mt-1">Add volunteer, student or competition needs for this event.</p>
+            </div>
+            <button type="button" onClick={() => setRequirements([...requirements, { title: "", type: "student", description: "", capacity: 0, active: true }])} className="px-3 py-2 rounded-lg bg-[#e86f3d] text-xs font-bold">+ Add requirement</button>
+          </div>
+          <div className="space-y-3">
+            {requirements.map((requirement, index) => (
+              <div key={index} className="grid md:grid-cols-[1.1fr_.8fr_1.5fr_.5fr_auto] gap-3 items-center rounded-xl border border-white/10 p-3">
+                <input placeholder="Requirement title" value={requirement.title} onChange={(e) => setRequirements(requirements.map((item, i) => i === index ? { ...item, title: e.target.value } : item))} className="input" />
+                <select value={requirement.type} onChange={(e) => setRequirements(requirements.map((item, i) => i === index ? { ...item, type: e.target.value } : item))} className="input">
+                  <option value="student">Students</option><option value="volunteer">Volunteers</option><option value="competition">Competition</option><option value="other">Other</option>
+                </select>
+                <input placeholder="Details / eligibility" value={requirement.description} onChange={(e) => setRequirements(requirements.map((item, i) => i === index ? { ...item, description: e.target.value } : item))} className="input" />
+                <input type="number" min="0" placeholder="Seats" value={requirement.capacity} onChange={(e) => setRequirements(requirements.map((item, i) => i === index ? { ...item, capacity: Number(e.target.value) } : item))} className="input" />
+                <button type="button" onClick={() => setRequirements(requirements.filter((_, i) => i !== index))} className="text-red-300 hover:text-red-100 text-xl" aria-label="Remove requirement">&times;</button>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* IMAGE UPLOAD */}
         <div className="md:col-span-2">
           <input
@@ -135,14 +161,14 @@ export default function AddEvent({ reload }) {
           </div>
         </div>
 
-        <motion.button
+        <Motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           disabled={loading}
           className="md:col-span-2 py-4 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 font-bold shadow-lg"
         >
           {loading ? "Uploading..." : "Add Event"}
-        </motion.button>
+        </Motion.button>
 
       </form>
 
@@ -160,6 +186,6 @@ export default function AddEvent({ reload }) {
           box-shadow: 0 0 10px rgba(255,115,0,0.5);
         }
       `}</style>
-    </motion.div>
+    </Motion.div>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
-import abhiruchiLogo from "../assets/abhiruchi1.png";
+import tejasLogo from "../assets/tejas.png";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -74,7 +74,7 @@ export default function AdminLogin() {
           >
             {/* Rocket animation */}
             <motion.img
-              src={abhiruchiLogo}
+              src={tejasLogo}
               alt="Rocket"
               className="w-24 h-24"
               initial={{ y: 0, scale: 1, rotate: 0 }}

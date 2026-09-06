@@ -44,34 +44,34 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-md transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
-            ? 'bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 shadow-2xl'
-            : 'bg-gradient-to-r from-purple-100 via-pink-50 to-indigo-100'
+            ? 'bg-[#101315]/95 backdrop-blur-xl shadow-[0_12px_35px_rgba(16,19,21,0.18)]'
+            : 'bg-[#f5f3ed]/85 backdrop-blur-xl'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between items-center h-20">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8">
+          <div className="flex justify-between items-center h-[76px]">
 
             {/* LOGO */}
             <div onClick={() => navigate('/')} className="flex items-center gap-3 cursor-pointer group">
-              <img src="/images/abhiruchi.png" className="h-12 w-12 group-hover:scale-125 transition" />
+              <img src="/images/tejas.png" alt="Tejas logo" className="h-11 w-11 rounded-full object-cover ring-2 ring-[#e86f3d]/70 group-hover:rotate-6 group-hover:scale-110 transition duration-500" />
               <div>
-                <h1 className={`font-extrabold ${isScrolled ? 'text-white' : 'text-purple-800'}`}>Abhiruchi</h1>
-                <p className={`${isScrolled ? 'text-gray-200' : 'text-purple-600'}`}>The Hobby Club</p>
+                <h1 className={`display-font text-xl font-bold leading-none ${isScrolled ? 'text-white' : 'text-[#101315]'}`}>Tejas</h1>
+                <p className={`text-[10px] uppercase tracking-[0.22em] mt-1 ${isScrolled ? 'text-white/60' : 'text-[#59605e]'}`}>The Dreamers Club</p>
               </div>
             </div>
 
             {/* DESKTOP */}
-            <div className="hidden md:flex gap-6">
+            <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
                 <button
                   key={link.name}
                   onClick={() => handleNavClick(link)}
-                  className={`uppercase text-sm font-medium px-3 py-2 rounded-lg transition ${
+                    className={`uppercase text-[11px] tracking-[0.16em] font-semibold px-4 py-2 rounded-full transition ${
                     isScrolled
-                      ? 'text-white hover:text-amber-400'
-                      : 'text-purple-800 hover:text-pink-500'
+                        ? 'text-white/75 hover:text-[#c7d96b] hover:bg-white/10'
+                        : 'text-[#59605e] hover:text-[#101315] hover:bg-black/5'
                   }`}
                 >
                   {link.name}
@@ -80,19 +80,19 @@ export default function Navbar() {
             </div>
 
             {/* MOBILE */}
-            <button onClick={() => setIsOpen(!isOpen)} className="md:hidden">
-              {isOpen ? <X /> : <Menu />}
+            <button onClick={() => setIsOpen(!isOpen)} aria-label={isOpen ? 'Close menu' : 'Open menu'} className={`md:hidden p-2 rounded-full ${isScrolled ? 'text-white bg-white/10' : 'text-[#101315] bg-black/5'}`}>
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
 
         {isOpen && (
-          <div className="md:hidden bg-white px-6 py-4">
+          <div className={`md:hidden px-6 py-4 border-t ${isScrolled ? 'bg-[#101315] border-white/10' : 'bg-[#f5f3ed] border-black/10'}`}>
             {navLinks.map((link) => (
               <button
                 key={link.name}
                 onClick={() => handleNavClick(link)}
-                className="block w-full text-left py-3 font-medium"
+                className={`block w-full text-left py-3 font-semibold text-sm uppercase tracking-[0.14em] ${isScrolled ? 'text-white/80' : 'text-[#101315]'}`}
               >
                 {link.name}
               </button>

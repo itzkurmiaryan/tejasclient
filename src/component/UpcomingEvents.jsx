@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import API from "../config/api";
+import { useNavigate } from "react-router-dom";
 
 export default function UpcomingEvents() {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [timeLeft, setTimeLeft] = useState({});
   const [loading, setLoading] = useState(true); // ✅ Loading state add ki
@@ -59,12 +61,15 @@ export default function UpcomingEvents() {
   }, [events, loading]);
 
   return (
-    <section className="py-24 bg-black text-white relative overflow-hidden">
-      <h2 className="text-5xl text-center mb-16 font-extrabold">
-        Upcoming <span className="text-orange-400">Events 🚀</span>
+    <section className="py-28 bg-[#101315] text-white relative overflow-hidden dark-grid">
+      <div className="absolute -right-20 -top-20 w-72 h-72 rounded-full border border-[#e86f3d]/30" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+      <p className="text-center uppercase tracking-[0.25em] text-xs text-[#c7d96b] font-bold mb-4">Make some noise</p>
+      <h2 className="display-font text-5xl md:text-7xl text-center mb-16 font-bold">
+        Upcoming <span className="text-[#e86f3d]">Events</span>
       </h2>
 
-      <div className="grid md:grid-cols-3 gap-10 px-10">
+      <div className="grid md:grid-cols-3 gap-7">
         {loading
           ? // ⏳ SKELETON UI: Jab tak server data load kar raha hai
             [1, 2, 3].map((n) => (
@@ -103,12 +108,13 @@ export default function UpcomingEvents() {
               const t = timeLeft[event._id];
 
               return (
-                <motion.div
+                <Motion.div
                   key={event._id}
+                  onClick={() => navigate(`/events/${event._id}`)}
                   initial={{ opacity: 0, y: 80 }}
                   animate={{ opacity: 1, y: 0 }}
                   whileHover={{ scale: 1.07, rotate: 1 }}
-                  className="relative p-6 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10
+                  className="relative p-7 rounded-[1.5rem] bg-white/[0.06] backdrop-blur-xl border border-white/10 cursor-pointer
                   shadow-[0_0_30px_rgba(255,115,0,0.2)]
                   hover:shadow-[0_0_60px_rgba(255,115,0,0.7)]
                   transition-all duration-500 overflow-hidden"
@@ -132,13 +138,13 @@ export default function UpcomingEvents() {
                   {t && t !== "LIVE" && (
                     <div className="flex gap-3 mt-4">
                       {["d", "h", "m", "s"].map((key) => (
-                        <motion.div
+                        <Motion.div
                           key={key}
                           whileHover={{ scale: 1.1 }}
                           className="bg-black/60 px-4 py-3 rounded-xl border border-orange-500/20 text-center w-16"
                         >
                           <AnimatePresence mode="wait">
-                            <motion.span
+                            <Motion.span
                               key={t[key]}
                               initial={{ y: -20, opacity: 0 }}
                               animate={{ y: 0, opacity: 1 }}
@@ -146,13 +152,13 @@ export default function UpcomingEvents() {
                               className="text-2xl font-bold text-orange-400 block"
                             >
                               {t[key]}
-                            </motion.span>
+                            </Motion.span>
                           </AnimatePresence>
 
                           <span className="text-xs text-gray-400 uppercase">
                             {key}
                           </span>
-                        </motion.div>
+                        </Motion.div>
                       ))}
                     </div>
                   )}
@@ -169,9 +175,10 @@ export default function UpcomingEvents() {
 
                   {/* 🔥 IMAGE CLICK */}
                   {event.images?.[0] && (
-                    <motion.img
+                    <Motion.img
                       src={event.images[0]}
-                      onClick={() => {
+                      onClick={(clickEvent) => {
+                        clickEvent.stopPropagation();
                         setCurrentImages(event.images);
                         setCurrentIndex(0);
                         setSelectedImage(event.images[0]);
@@ -180,15 +187,16 @@ export default function UpcomingEvents() {
                       className="mt-5 rounded-xl h-44 w-full object-cover cursor-pointer"
                     />
                   )}
-                </motion.div>
+                </Motion.div>
               );
             })}
+      </div>
       </div>
 
       {/* 🔥 FULL SCREEN IMAGE VIEWER */}
       <AnimatePresence>
         {selectedImage && (
-          <motion.div
+          <Motion.div
             className="fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -229,7 +237,7 @@ export default function UpcomingEvents() {
             </button>
 
             {/* IMAGE */}
-            <motion.img
+            <Motion.img
               key={selectedImage}
               src={selectedImage}
               initial={{ scale: 0.7, opacity: 0 }}
@@ -242,7 +250,7 @@ export default function UpcomingEvents() {
             <div className="absolute bottom-6 text-gray-400 text-sm">
               {currentIndex + 1} / {currentImages.length}
             </div>
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
     </section>

@@ -4,17 +4,17 @@ import { Mail, Phone, MapPin, Send } from "lucide-react";
 import emailjs from "@emailjs/browser";
 
 /* ===== CLUB LOGOS ===== */
-import panache from "../assets/panache.png";
-import rockon from "../assets/rockon.png";
-import itech from "../assets/itech.png";
-import images from "../assets/images.png";
-import stride from "../assets/stride.png";
-import mfactor from "../assets/mfactor.png";
-import responsible from "../assets/tri.png";
+import socialLogo from "../assets/tsc1.png";
+import aakritiLogo from "../assets/tac.png";
+import spardhaLogo from "../assets/tsc.png";
+import prayatnaLogo from "../assets/tpc.png";
+import impressionsLogo from "../assets/tic.png";
+import goonjLogo from "../assets/tgc.png";
+import einsteinLogo from "../assets/tec.png";
 import API from "../config/api";
 
 
-const clubLogos = [panache, rockon, itech, images, stride, mfactor, responsible];
+const clubLogos = [socialLogo, aakritiLogo, spardhaLogo, prayatnaLogo, impressionsLogo, goonjLogo, einsteinLogo];
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -140,11 +140,11 @@ const Contact = () => {
       {/* ================= CONTACT SECTION ================= */}
       <section
         id="contact"
-        className="relative overflow-hidden bg-gradient-to-br from-[#0a0a14] via-[#11121f] to-[#1c1c1c] py-28 px-6 text-white"
+        className="relative overflow-hidden bg-[#101315] py-28 px-6 text-white dark-grid"
       >
         {/* Decorative Blobs */}
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-orange-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-20 -right-20 w-[30rem] h-[30rem] bg-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#e86f3d]/15 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-20 -right-20 w-[30rem] h-[30rem] bg-[#c7d96b]/10 rounded-full blur-3xl animate-pulse"></div>
 
         {/* Heading */}
         <motion.div
@@ -153,8 +153,9 @@ const Contact = () => {
           transition={{ duration: 1, ease: "easeOut" }}
           className="relative z-10 max-w-4xl mx-auto text-center mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-extrabold mb-6">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-400 via-red-500 to-pink-500">
+          <p className="text-[#c7d96b] uppercase tracking-[0.25em] text-xs font-bold mb-5">Start a conversation</p>
+          <h2 className="display-font text-5xl md:text-7xl font-bold mb-6">
+            <span className="text-[#e86f3d]">
               Let’s Connect
             </span>
           </h2>
@@ -170,13 +171,13 @@ const Contact = () => {
             initial={{ opacity: 0, y: 60, rotateX: 15 }}
             whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-[0_0_50px_rgba(255,115,0,0.2)] hover:shadow-[0_0_60px_rgba(255,115,0,0.4)] transition"
+            className="bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-[1.5rem] p-10 shadow-[0_0_50px_rgba(232,111,61,0.12)] hover:shadow-[0_0_60px_rgba(232,111,61,0.25)] transition"
           >
-            <h3 className="text-3xl font-bold mb-10 text-orange-400">Contact Info</h3>
+            <h3 className="display-font text-3xl font-bold mb-10 text-[#e86f3d]">Contact Info</h3>
             <div className="space-y-8">
-              <div className="flex items-center gap-5"><Mail className="w-7 h-7 text-orange-400" /> abhiruchi@invertisuniversity.ac.in</div>
+              <div className="flex items-center gap-5"><Mail className="w-7 h-7 text-orange-400" /> tejas@futureuniversity.ac.in</div>
               <div className="flex items-center gap-5"><Phone className="w-7 h-7 text-orange-400" /> +91 7524917394</div>
-              <div className="flex items-center gap-5"><MapPin className="w-7 h-7 text-orange-400" /> Invertis University, Bareilly, UP</div>
+              <div className="flex items-center gap-5"><MapPin className="w-7 h-7 text-orange-400" /> Future University, Bareilly, UP</div>
             </div>
           </motion.div>
 
@@ -187,9 +188,9 @@ const Contact = () => {
               initial={{ opacity: 0, y: 60, rotateX: -15 }}
               whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               transition={{ duration: 0.9, ease: "easeOut" }}
-              className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-[0_0_50px_rgba(255,0,0,0.2)] hover:shadow-[0_0_60px_rgba(255,0,0,0.4)] transition relative"
+              className="bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-[1.5rem] p-10 shadow-[0_0_50px_rgba(232,111,61,0.12)] hover:shadow-[0_0_60px_rgba(232,111,61,0.25)] transition relative"
             >
-              <h3 className="text-3xl font-bold mb-10 text-red-400">Send Message</h3>
+              <h3 className="display-font text-3xl font-bold mb-10 text-[#c7d96b]">Send Message</h3>
               <div className="space-y-6">
                 <input
                   type="text"
@@ -223,7 +224,7 @@ const Contact = () => {
                   disabled={sending}
                   whileHover={{ scale: sending ? 1 : 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-red-600 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-orange-500/50 transition disabled:opacity-60"
+                  className="w-full flex items-center justify-center gap-3 bg-[#e86f3d] py-4 rounded-xl font-semibold text-lg shadow-lg hover:bg-[#f18452] hover:shadow-[#e86f3d]/50 transition disabled:opacity-60"
                 >
                   <Send className="w-5 h-5" />
                   {sending ? "Sending..." : "Send Message"}
@@ -233,7 +234,7 @@ const Contact = () => {
           ) : (
             <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-12 text-center border border-white/10 shadow-lg">
               <h2 className="text-4xl font-bold text-green-400 mb-4">Message Sent ✅</h2>
-              <p className="text-gray-300">Team Abhiruchi will contact you soon.</p>
+              <p className="text-gray-300">Team Tejas will contact you soon.</p>
             </div>
           )}
         </div>

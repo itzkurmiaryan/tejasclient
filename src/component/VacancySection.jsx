@@ -1,26 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import API from "../config/api";
+import { clubs } from "../config/clubs";
 
-/* ===== CLUB LOGOS IMPORT ===== */
-import panache from "../assets/panache.png";
-import rockon from "../assets/rockon.png";
-import itech from "../assets/itech.png";
-import images from "../assets/images.png";
-import stride from "../assets/stride.png";
-import mfactor from "../assets/mfactor.png";
-import responsible from "../assets/tri.png";
-
-// Logo mapping helper
-const clubLogos = {
-  "Panache – The Arts Club": panache,
-  "Rock On – The Cultural Club": rockon,
-  "I-Tech – The Technical Club": itech,
-  "Images – The Publication Club": images,
-  "Stride – The Sports Club": stride,
-  "M-Factor – The Management Club": mfactor,
-  "The Responsible Invertian – The Social Cause Club": responsible,
-};
+const clubLogos = Object.fromEntries(clubs.map((club) => [club.name, club.logo]));
 
 export default function VacancySection() {
   const [data, setData] = useState([]);
@@ -90,7 +73,7 @@ export default function VacancySection() {
             </div>
             <h3 className="text-gray-800 font-bold text-base">No Open Vacancies Right Now</h3>
             <p className="text-xs text-gray-500 mt-1 max-w-sm mx-auto">
-              You can still submit a general application form below to join Abhiruchi!
+              You can still submit a general application form below to join Tejas!
             </p>
           </div>
         ) : (

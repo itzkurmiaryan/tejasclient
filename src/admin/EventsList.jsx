@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion as Motion, AnimatePresence } from "framer-motion";
 import API from "../config/api";
 
 export default function EventsList({ events, reload }) {
@@ -62,7 +62,7 @@ export default function EventsList({ events, reload }) {
     const formData = new FormData();
 
     Object.keys(form).forEach((key) => {
-      formData.append(key, form[key]);
+      formData.append(key, key === "requirements" ? JSON.stringify(form[key] || []) : form[key]);
     });
 
     newImages.forEach((img) =>
@@ -103,7 +103,7 @@ export default function EventsList({ events, reload }) {
 
           return (
 
-            <motion.div
+            <Motion.div
               key={event._id}
               whileHover={{ scale: 1.03 }}
               className="rounded-2xl bg-gradient-to-br from-white/5 to-white/10 border border-white/10 shadow-lg overflow-hidden hover:shadow-[0_0_25px_rgba(255,115,0,0.4)] transition"
@@ -163,7 +163,7 @@ export default function EventsList({ events, reload }) {
               {/* DETAILS */}
               <AnimatePresence>
                 {expanded === event._id && (
-                  <motion.div
+                  <Motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
@@ -187,6 +187,25 @@ export default function EventsList({ events, reload }) {
                             setForm({ ...form, description: e.target.value })
                           }
                         />
+
+                        <div className="mb-4 rounded-xl border border-white/10 p-3">
+                          <div className="flex items-center justify-between gap-3 mb-3">
+                            <p className="text-sm font-semibold text-orange-300">Event requirements</p>
+                            <button type="button" onClick={() => setForm({ ...form, requirements: [...(form.requirements || []), { title: "New requirement", type: "student", description: "", capacity: 0, active: true }] })} className="text-xs px-2 py-1 rounded bg-orange-500">+ Add</button>
+                          </div>
+                          {(form.requirements || []).map((requirement, index) => (
+                            <div key={requirement._id || index} className="flex items-center gap-3 mb-2 text-sm">
+                              <input
+                                type="checkbox"
+                                checked={requirement.active !== false}
+                                onChange={(e) => setForm({ ...form, requirements: form.requirements.map((item, i) => i === index ? { ...item, active: e.target.checked } : item) })}
+                              />
+                              <span className="flex-1">{requirement.title || requirement.type}</span>
+                              <button type="button" onClick={() => setForm({ ...form, requirements: form.requirements.filter((_, i) => i !== index) })} className="text-red-300">Remove</button>
+                            </div>
+                          ))}
+                          {(!form.requirements || form.requirements.length === 0) && <p className="text-xs text-white/45">No requirements added.</p>}
+                        </div>
 
                         {/* 🔥 UPCOMING TOGGLE */}
                         <label className="flex items-center gap-2 mb-2">
@@ -256,11 +275,11 @@ export default function EventsList({ events, reload }) {
                       </>
                     )}
 
-                  </motion.div>
+                  </Motion.div>
                 )}
               </AnimatePresence>
 
-            </motion.div>
+            </Motion.div>
           );
         })}
       </div>

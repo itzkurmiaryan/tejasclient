@@ -8,38 +8,38 @@ import {
   Mail,
 } from "lucide-react";
 
-import abhiruchiLogo from "../assets/abhiruchi1.png";
-import invertisLogo from "../assets/invertis.png";
+import tejasLogo from "../assets/tejas.png";
+import invertisLogo from "../assets/future.png";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-[#0b0f1a] text-gray-300">
+    <footer className="relative overflow-hidden bg-[#0d1011] text-gray-300 dark-grid">
 
       {/* 🌌 Subtle Grid Background */}
       <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] bg-[size:40px_40px]"></div>
 
       {/* 🌈 Top Glow Line */}
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-orange-500 to-transparent"></div>
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#e86f3d] to-transparent"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-14">
 
         {/* 🧠 Brand Section */}
         <div className="space-y-5">
-          {/* Abhiruchi Logo */}
-          <img src={abhiruchiLogo} alt="Abhiruchi Logo" className="h-16 w-16 mb-2" />
+          {/* Tejas Logo */}
+          <img src={tejasLogo} alt="Tejas Logo" className="h-16 w-16 mb-2" />
 
-          <h2 className="text-3xl font-extrabold tracking-wide bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
-            Abhiruchi
+          <h2 className="display-font text-3xl font-bold tracking-wide text-[#e86f3d]">
+            Tejas – The Dreamers Club
           </h2>
 
           <p className="text-gray-400 leading-relaxed max-w-sm">
-            Abhiruchi – The Hobby Club of Invertis University.
+            Tejas – The Dreamers Club of Future University.
             Where creativity, innovation & passion grow beyond classrooms.
           </p>
 
           <div className="flex items-center gap-3 text-sm text-gray-500">
             <Mail size={16} />
-            abhiruchi@invertisuniversity.ac.in
+            tejas@futureuniversity.ac.in
           </div>
 
           <div className="flex items-center gap-3 text-sm text-gray-500">
@@ -77,7 +77,7 @@ export default function Footer() {
           <div className="flex gap-5 flex-wrap">
             {[
               { icon: Phone, link: "https://wa.me/7524917394" },
-              { icon: Instagram, link: "https://www.instagram.com/abhiruchi_invertisuniversity/" },
+              { icon: Instagram, link: "https://www.instagram.com/tejas_invertisuniversity/" },
               { icon: Facebook, link: "https://www.facebook.com/profile.php?id=100078066442257" },
               { icon: Twitter, link: "https://x.com/InvertisUni" },
               { icon: Linkedin, link: "https://www.linkedin.com/school/invertisuniversity/posts/?feedView=all" },
@@ -105,21 +105,21 @@ export default function Footer() {
 
           {/* Invertis University Logo bigger, visually matching icons */}
           <div className="mt-4 flex justify-center">
-            <img src={invertisLogo} alt="Invertis University Logo" className="h-20 w-auto" />
+            <img src={invertisLogo} alt="Future University Logo" className="h-40 w-auto" />
           </div>
         </div>
       </div>
 
       {/* 🔻 Bottom Bar */}
       <div className="relative z-10 border-t border-white/10 py-6 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} Abhiruchi – The Hobby Club, Invertis University
+        © {new Date().getFullYear()} Tejas – The Dreamers Club, Future University
         <span className="block mt-1 text-gray-600">
           Designed & Developed by 
           <a
             href="https://alphaaryx.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-orange-400 hover:underline inline-flex items-center"
+            className="text-[#e86f3d] hover:underline inline-flex items-center"
           >
             AlphaAryX (Aryan)
           </a>

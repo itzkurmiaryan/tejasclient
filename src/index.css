@@ -1,5 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
 @import "tailwindcss";
-/* index.css ya globals.css */
+
+:root {
+  --ink: #101315;
+  --muted-ink: #59605e;
+  --paper: #f5f3ed;
+  --cream: #ebe8df;
+  --accent: #e86f3d;
+  --accent-deep: #b94727;
+  --lime: #c7d96b;
+  --line: rgba(16, 19, 21, 0.12);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+button, input, textarea { font: inherit; }
+
+button { cursor: pointer; }
+
+::selection { background: var(--lime); color: var(--ink); }
+
+.display-font { font-family: 'Playfair Display', Georgia, serif; }
+
+.site-grid {
+  background-image: linear-gradient(rgba(16, 19, 21, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 19, 21, 0.045) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.dark-grid {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.reveal-up { animation: reveal-up 0.8s cubic-bezier(.2,.75,.25,1) both; }
+.delay-1 { animation-delay: .12s; }
+.delay-2 { animation-delay: .24s; }
+.delay-3 { animation-delay: .36s; }
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+.float-slow { animation: float-slow 5s ease-in-out infinite; }
+
+/* Glassmorphic Scrollbar */
 @layer utilities {
   .noise-bg {
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
@@ -22,5 +88,14 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(168, 85, 247, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%);
+  background: linear-gradient(180deg, rgba(232, 111, 61, 0.95) 0%, rgba(199, 217, 107, 0.95) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

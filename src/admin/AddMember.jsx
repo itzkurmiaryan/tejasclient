@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import API from "../config/api";
+import { clubs as clubCatalog } from "../config/clubs";
 
 export default function AddMember({ reload }) {
   const [form, setForm] = useState({
-    club: "",
+    club: clubCatalog[0]?.name || "",
     type: "team",
     role: "",
     name: "",
@@ -15,41 +16,9 @@ export default function AddMember({ reload }) {
 
   const [photo, setPhoto] = useState(null);
   const [preview, setPreview] = useState("");
-  const [clubs, setClubs] = useState([]);
+  const clubs = clubCatalog;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // =====================================================
-  // FETCH CLUBS
-  // =====================================================
-
-  useEffect(() => {
-    const fetchClubs = async () => {
-      try {
-        const res = await fetch(`${API}/clubs`);
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch clubs");
-        }
-
-        const data = await res.json();
-
-        setClubs(data || []);
-
-        if (data?.length > 0) {
-          setForm((prev) => ({
-            ...prev,
-            club: data[0].name,
-          }));
-        }
-      } catch (err) {
-        console.error("CLUB FETCH ERROR:", err);
-        setError("Unable to load clubs.");
-      }
-    };
-
-    fetchClubs();
-  }, []);
 
   // =====================================================
   // IMAGE SELECT

@@ -28,6 +28,8 @@ import ApplicationsList from "./ApplicationsList";
 // 🔥 ADD THESE (NEW)
 import AddVacancy from "./AddVacancy";
 import VacancyList from "./VacancyList";
+import AddEventOpportunity from "./AddEventOpportunity";
+import EventOpportunityList from "./EventOpportunityList";
 
 import ContactList from "./ContactList";
 import API from "../config/api";
@@ -42,6 +44,7 @@ export default function AdminDashboard() {
 
     // 🔥 NEW STATE
   const [vacancies, setVacancies] = useState([]);
+  const [eventOpportunities, setEventOpportunities] = useState([]);
 
 
 
@@ -50,12 +53,13 @@ export default function AdminDashboard() {
 
   // LOAD DATA
   const loadData = async () => {
-    const [e, g, m, a, c] = await Promise.all([
+    const [e, g, m, a, c, o] = await Promise.all([
       fetch(`${API}/events`).then(r => r.json()),
       fetch(`${API}/gallery`).then(r => r.json()),
       fetch(`${API}/members`).then(r => r.json()),
       fetch(`${API}/applications`).then(r => r.json()),
-      fetch(`${API}/contact`).then(r => r.json())
+      fetch(`${API}/contact`).then(r => r.json()),
+      fetch(`${API}/event-opportunities`).then(r => r.json())
     ]);
 
     setEvents(e);
@@ -63,6 +67,7 @@ export default function AdminDashboard() {
     setMembers(m);
     setApplications(a);
     setContacts(c);
+    setEventOpportunities(o);
   };
 
   // AUTO REFRESH
@@ -92,6 +97,7 @@ export default function AdminDashboard() {
     { key: "gallery", icon: Image },
     { key: "members", icon: Users },
      { key: "vacancies", icon: Users }, // 🔥 NEW
+    { key: "event-opportunities", icon: Calendar },
     { key: "applications", icon: FileText },
     { key: "contacts", icon: MessageSquare }
   ];
@@ -256,6 +262,13 @@ export default function AdminDashboard() {
           <>
             <AddVacancy reload={loadData} />
             <VacancyList data={vacancies} reload={loadData} />
+          </>
+        )}
+
+        {activePage === "event-opportunities" && (
+          <>
+            <AddEventOpportunity events={events} reload={loadData} />
+            <EventOpportunityList data={eventOpportunities} reload={loadData} />
           </>
         )}
 

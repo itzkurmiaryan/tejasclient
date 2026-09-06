@@ -20,6 +20,8 @@ import AdminDashboard from "./admin/AdminDashboard"
 import ProtectedRoute from "./admin/ProtectedRoute";
 
 import UpcomingEvents from "./component/UpcomingEvents";
+import EventDetails from "./component/EventDetails";
+import EventOpportunityPage from "./component/EventOpportunityPage";
 function HomePage() {
   const location = useLocation();
 
@@ -53,6 +55,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/events/:eventId" element={<EventDetails />} />
+        <Route path="/event-opportunities/:opportunityId" element={<EventOpportunityPage />} />
         <Route path="/join-us" element={<JoinUs />} />
         <Route path="/club/:clubName" element={<ClubPage />} />
         <Route path="/admin" element={<AdminLogin />} />

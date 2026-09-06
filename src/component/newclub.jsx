@@ -39,7 +39,7 @@ const clubsData = {
     color: "#fb7185",
     tagline: "Feel the rhythm. Own the stage.",
     about:
-      "Rock On Club is the cultural heartbeat of Abhiruchi. It nurtures talent in music, dance and stage performances.",
+      "The Goonj Club is the cultural heartbeat of Tejas. It nurtures student talent through performances and campus engagement.",
     team: [
       {
         role: "President",

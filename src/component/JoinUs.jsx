@@ -3,26 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 import API from "../config/api";
 import VacancySection from "./VacancySection";
+import { clubsData } from "../config/clubs";
 
 /* ===== CLUB LOGOS ===== */
-import panache from "../assets/panache.png";
-import rockon from "../assets/rockon.png";
-import itech from "../assets/itech.png";
-import images from "../assets/images.png";
-import stride from "../assets/stride.png";
-import mfactor from "../assets/mfactor.png";
-import responsible from "../assets/tri.png";
-
-/* ===== CLUB DATA ===== */
-const clubsData = [
-  { name: "Panache – The Arts Club", logo: panache, email: "panache@gmail.com" },
-  { name: "Rock On – The Cultural Club", logo: rockon, email: "rockon@gmail.com" },
-  { name: "I-Tech – The Technical Club", logo: itech, email: "itech@gmail.com" },
-  { name: "Images – The Publication Club", logo: images, email: "images@gmail.com" },
-  { name: "Stride – The Sports Club", logo: stride, email: "stride@gmail.com" },
-  { name: "M-Factor – The Management Club", logo: mfactor, email: "mfactor@gmail.com" },
-  { name: "The Responsible Invertian – The Social Cause Club", logo: responsible, email: "responsible@gmail.com" }
-];
 
 const JoinUs = () => {
   const [formData, setFormData] = useState({
@@ -107,28 +90,28 @@ const JoinUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-100 px-4 py-12 relative overflow-hidden font-sans selection:bg-pink-500 selection:text-white">
+    <div className="min-h-screen bg-[#101315] text-white px-4 py-16 md:py-24 relative overflow-hidden font-sans selection:bg-[#c7d96b] selection:text-[#101315] dark-grid">
       {/* 1. MOUSE FOLLOW AMBIENT LIGHT */}
       <div
         className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-300"
         style={{
-          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(168, 85, 247, 0.12), transparent 80%)`
+          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(232, 111, 61, 0.14), transparent 80%)`
         }}
       />
 
       {/* 2. DYNAMIC GRID BACKGROUND OVERLAY */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293715_1px,transparent_1px),linear-gradient(to_bottom,#1f293715_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff09_1px,transparent_1px),linear-gradient(to_bottom,#ffffff09_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
 
       {/* 3. MULTI-LAYER NEON BACKGROUND BLURS */}
-      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-tr from-purple-600/30 via-pink-600/20 to-amber-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse" />
-      <div className="absolute top-1/2 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 -right-40 w-96 h-96 bg-pink-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#e86f3d]/15 rounded-full blur-[140px] pointer-events-none animate-pulse" />
+      <div className="absolute top-1/2 -left-40 w-96 h-96 bg-[#c7d96b]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 -right-40 w-96 h-96 bg-[#e86f3d]/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* VACANCY SECTION AT TOP */}
       <VacancySection />
 
       {/* 4. FLOATING CLUB BADGES BANNER */}
-      <div className="relative z-10 w-full max-w-4xl mx-auto my-6 overflow-hidden py-2 mask-linear-gradient">
+      <div className="relative z-10 w-full max-w-4xl mx-auto my-10 overflow-hidden py-2 mask-linear-gradient">
         <div className="flex gap-3 justify-center flex-wrap">
           {clubsData.map((c, idx) => (
             <motion.div
@@ -136,7 +119,7 @@ const JoinUs = () => {
               whileHover={{ scale: 1.05, y: -2 }}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold backdrop-blur-md transition-all duration-300 cursor-default ${
                 formData.club === c.name
-                  ? "bg-purple-500/20 border-purple-400 text-purple-200 shadow-lg shadow-purple-500/20"
+                  ? "bg-[#e86f3d]/20 border-[#e86f3d] text-white shadow-lg shadow-[#e86f3d]/20"
                   : "bg-white/5 border-white/10 text-slate-400 hover:border-white/30 hover:text-slate-200"
               }`}
             >
@@ -148,9 +131,9 @@ const JoinUs = () => {
       </div>
 
       {/* MAIN FORM CONTAINER WRAPPER WITH OUTER GLOW */}
-      <div className="relative z-10 flex items-center justify-center mt-4">
+      <div className="relative z-10 flex items-center justify-center mt-8">
         {/* FORM CONTAINER AURA EFFECT */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 rounded-[36px] blur-xl opacity-20 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 pointer-events-none" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#e86f3d] via-[#c7d96b] to-[#e86f3d] rounded-[36px] blur-xl opacity-20 pointer-events-none" />
 
         {/* PREMIUM LOADING OVERLAY */}
         <AnimatePresence>
@@ -229,16 +212,16 @@ const JoinUs = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.4 }}
-              className="w-full max-w-2xl bg-white/10 backdrop-blur-2xl border border-white/15 p-8 sm:p-10 rounded-3xl shadow-2xl relative overflow-hidden"
+              className="w-full max-w-3xl bg-white/[0.07] backdrop-blur-2xl border border-white/15 p-8 sm:p-12 rounded-[2rem] shadow-2xl relative overflow-hidden"
             >
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-amber-400" />
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#e86f3d] via-[#c7d96b] to-[#e86f3d]" />
 
               <div className="text-center mb-8">
-                <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300">
+                <span className="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-[#c7d96b]/10 border border-[#c7d96b]/20 text-[#c7d96b]">
                   Registration Form
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-black mt-2 bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
-                  Join <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Abhiruchi</span>
+                <h2 className="display-font text-4xl sm:text-6xl font-bold mt-4">
+                  Join <span className="text-[#e86f3d]">Tejas</span>
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-400 mt-1">
                   Fill out your details to become an official member
@@ -257,7 +240,7 @@ const JoinUs = () => {
                     placeholder="John Doe"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full bg-slate-900/60 border border-white/10 focus:border-purple-500/80 rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 text-white placeholder-slate-500"
+                    className="w-full bg-black/25 border border-white/10 focus:border-[#e86f3d]/80 rounded-xl px-4 py-3 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-[#e86f3d]/20 text-white placeholder-white/35"
                   />
                 </div>
 
@@ -271,7 +254,7 @@ const JoinUs = () => {
                     placeholder="2024101001"
                     value={formData.studentId}
                     onChange={handleChange}
-                    className="w-full bg-slate-900/60 border border-white/10 focus:border-purple-500/80 rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 text-white placeholder-slate-500"
+                    className="w-full bg-black/25 border border-white/10 focus:border-[#e86f3d]/80 rounded-xl px-4 py-3 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-[#e86f3d]/20 text-white placeholder-white/35"
                   />
                 </div>
 
@@ -353,7 +336,7 @@ const JoinUs = () => {
                     required
                     value={formData.club}
                     onChange={handleChange}
-                    className="w-full bg-slate-900 border border-white/10 focus:border-purple-500/80 rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 text-white"
+                    className="w-full bg-[#171b1d] border border-white/10 focus:border-[#e86f3d]/80 rounded-xl px-4 py-3 text-sm outline-none transition-all duration-200 focus:ring-2 focus:ring-[#e86f3d]/20 text-white"
                   >
                     <option value="" className="bg-slate-900 text-slate-400">
                       -- Choose a Club --
@@ -397,7 +380,7 @@ const JoinUs = () => {
               {/* SUBMIT BUTTON */}
               <button
                 type="submit"
-                className="w-full mt-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white font-extrabold text-sm shadow-lg hover:shadow-purple-500/25 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+                className="w-full mt-8 py-4 rounded-xl bg-[#e86f3d] text-white font-extrabold text-sm shadow-lg hover:bg-[#f18452] hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
               >
                 Submit Application
               </button>

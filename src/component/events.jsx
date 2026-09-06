@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
+import { clubs as clubCatalog } from "../config/clubs";
 
 const API_URL =
   import.meta.env.VITE_API_URL ||
-  "https://abhiruchi-backend.onrender.com/api";
+  "http://localhost:5000/api";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
@@ -41,16 +42,7 @@ export default function Events() {
     fetchEvents();
   }, []);
 
-  const clubs = [
-    "All",
-    "I-Tech Club",
-    "Rock On Club",
-    "Stride Club",
-    "Panache Club",
-    "Images Club",
-    "Responsible Invertians",
-    "M Factor",
-  ];
+  const clubs = ["All", ...clubCatalog.map((club) => club.name)];
 
   const filteredEvents =
     activeClub === "All"
@@ -59,26 +51,27 @@ export default function Events() {
 
   return (
     <>
-      <section className="bg-gradient-to-b from-slate-950 via-slate-900 to-black text-white min-h-screen py-20 px-6">
+      <section className="bg-[#101315] dark-grid text-white min-h-screen py-24 px-6 relative overflow-hidden">
 
-        <h1 className="text-5xl md:text-6xl font-extrabold text-center mb-10">
+        <p className="text-center text-[#c7d96b] uppercase tracking-[.25em] text-xs font-bold mb-5">Moments worth showing up for</p>
+        <h1 className="display-font text-5xl md:text-7xl font-bold text-center mb-10">
           College{" "}
-          <span className="bg-gradient-to-r from-amber-400 to-pink-500 bg-clip-text text-transparent">
+          <span className="text-[#e86f3d]">
             Events
           </span>
         </h1>
 
         {/* FILTER */}
-        <div className="flex flex-wrap justify-center gap-4 mb-20">
+        <div className="flex flex-wrap justify-center gap-2 mb-20">
           {clubs.map((club) => (
             <button
               key={club}
               onClick={() => setActiveClub(club)}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all duration-300
               ${
                 activeClub === club
-                  ? "bg-gradient-to-r from-amber-400 to-pink-500 text-black shadow-lg scale-110"
-                  : "bg-white/10 hover:bg-white/20"
+                  ? "bg-[#e86f3d] border-[#e86f3d] text-white shadow-lg scale-105"
+                  : "bg-white/5 border-white/10 hover:bg-white/15"
               }`}
             >
               {club}
@@ -255,8 +248,8 @@ function EventRow({ event, onImageClick }) {
         rotateY: -4,
         scale: 1.01,
       }}
-      className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-xl
-      hover:shadow-[0_0_40px_rgba(255,115,0,0.5)]
+      className="relative bg-white/[0.06] backdrop-blur-xl rounded-[2rem] p-8 md:p-10 shadow-xl border border-white/10
+      hover:shadow-[0_0_40px_rgba(232,111,61,0.28)] hover:border-white/25
       transition-all duration-500"
     >
 
@@ -266,7 +259,7 @@ function EventRow({ event, onImageClick }) {
 
         <div className="flex flex-wrap items-center gap-4">
 
-          <h2 className="text-3xl md:text-4xl font-bold flex items-center gap-3">
+          <h2 className="display-font text-3xl md:text-5xl font-bold flex items-center gap-3">
 
             {event.name}
 
@@ -285,11 +278,7 @@ function EventRow({ event, onImageClick }) {
           </h2>
 
           {event.date && (
-            <span className="px-4 py-1 rounded-full text-sm
-            bg-gradient-to-r
-            from-amber-400
-            to-pink-500
-            text-black">
+            <span className="px-4 py-1 rounded-full text-sm bg-[#c7d96b] text-[#101315] font-semibold">
 
               {eventDate.toLocaleDateString("en-IN",{
                 day:"numeric",
@@ -302,7 +291,7 @@ function EventRow({ event, onImageClick }) {
 
         </div>
 
-        <p className="text-amber-400 mt-3">
+        <p className="text-[#e86f3d] mt-3 font-semibold">
           {event.club}
         </p>
 
@@ -346,7 +335,7 @@ function EventRow({ event, onImageClick }) {
               key={i}
               whileHover={{ scale: 1.06 }}
               className="relative flex-shrink-0
-              w-80 h-48 rounded-3xl overflow-hidden
+              w-80 h-48 rounded-[1.25rem] overflow-hidden
               cursor-pointer group"
             >
               <img

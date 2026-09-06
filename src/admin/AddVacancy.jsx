@@ -1,16 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import API from "../config/api";
-
-const clubs = [
-  "Panache – The Arts Club",
-  "Rock On – The Cultural Club",
-  "I-Tech – The Technical Club",
-  "Images – The Publication Club",
-  "Stride – The Sports Club",
-  "M-Factor – The Management Club",
-  "The Responsible Invertian – The Social Cause Club",
-];
+import { clubs } from "../config/clubs";
 
 const posts = [
   "President",
@@ -114,9 +105,9 @@ export default function AddVacancy({ reload }) {
               <option value="" disabled className="text-slate-500 bg-slate-900">
                 -- Select a Club --
               </option>
-              {clubs.map((c) => (
-                <option key={c} value={c} className="bg-slate-900 text-white">
-                  {c}
+              {clubs.map((clubOption) => (
+                <option key={clubOption.key} value={clubOption.name} className="bg-slate-900 text-white">
+                  {clubOption.name}
                 </option>
               ))}
             </select>
