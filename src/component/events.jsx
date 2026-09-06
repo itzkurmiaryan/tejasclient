@@ -2,10 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { clubs as clubCatalog } from "../config/clubs";
-
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "http://localhost:5000/api";
+import API_URL from "../config/api";
 
 export default function Events() {
   const [events, setEvents] = useState([]);
